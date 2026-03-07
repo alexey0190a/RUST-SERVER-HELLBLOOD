@@ -1,0 +1,113 @@
+{
+  "Ui": {
+    "OverlayColor": "0 0 0 0.75",
+    "MainAnchorMin": "0.05 0.05",
+    "MainAnchorMax": "0.95 0.95",
+    "FrameImageKey": "serverinfo_frame",
+    "FrameFallbackUrl": "",
+    "LeftPanelImageKey": "serverinfo_leftpanel",
+    "LeftPanelFallbackUrl": "",
+    "LeftPanelArea": {
+      "AnchorMin": "0.03 0.05",
+      "AnchorMax": "0.31 0.93"
+    },
+    "ContentArea": {
+      "AnchorMin": "0.31 0.04",
+      "AnchorMax": "0.94 0.89"
+    },
+    "CloseImageKey": "serverinfo_close",
+    "CloseFallbackUrl": "",
+    "CloseButton": {
+      "AnchorMin": "0.915 0.805",
+      "AnchorMax": "1 1.005"
+    },
+    "SettingsButton": {
+      "AnchorMin": "0.80 0.935",
+      "AnchorMax": "0.945 0.985"
+    },
+    "EventsPrevButton": {
+      "AnchorMin": "0.797 0.195",
+      "AnchorMax": "0.842 0.236"
+    },
+    "EventsNextButton": {
+      "AnchorMin": "0.847 0.195",
+      "AnchorMax": "0.892 0.236"
+    },
+    "EditorStep": 0.001
+  },
+  "Tabs": [
+    {
+      "Key": "info",
+      "Name": "Информация",
+      "ImageKey": "serverinfo_tab_info",
+      "FallbackUrl": "",
+      "ContentImageKey": null,
+      "ContentFallbackUrl": null,
+      "ButtonRect": {
+        "AnchorMin": "0.092 0.758",
+        "AnchorMax": "0.252 0.828"
+      }
+    },
+    {
+      "Key": "rules",
+      "Name": "Правила",
+      "ImageKey": "serverinfo_tab_rules",
+      "FallbackUrl": "",
+      "ContentImageKey": null,
+      "ContentFallbackUrl": null,
+      "ButtonRect": {
+        "AnchorMin": "0.115 0.63",
+        "AnchorMax": "0.225 0.704"
+      }
+    },
+    {
+      "Key": "commands",
+      "Name": "Команды",
+      "ImageKey": "serverinfo_tab_commands",
+      "FallbackUrl": "",
+      "ContentImageKey": null,
+      "ContentFallbackUrl": null,
+      "ButtonRect": {
+        "AnchorMin": "0.11 0.515",
+        "AnchorMax": "0.23 0.585"
+      }
+    },
+    {
+      "Key": "events",
+      "Name": "Ивенты",
+      "ImageKey": "serverinfo_tab_events",
+      "FallbackUrl": "",
+      "ContentImageKey": null,
+      "ContentFallbackUrl": null,
+      "ButtonRect": {
+        "AnchorMin": "0.12 0.392",
+        "AnchorMax": "0.219 0.462"
+      }
+    },
+    {
+      "Key": "about",
+      "Name": "О нас",
+      "ImageKey": "serverinfo_tab_about",
+      "FallbackUrl": "",
+      "ContentImageKey": null,
+      "ContentFallbackUrl": null,
+      "ButtonRect": {
+        "AnchorMin": "0.131 0.274",
+        "AnchorMax": "0.207 0.342"
+      }
+    },
+    {
+      "Key": "links",
+      "Name": "Ссылки",
+      "ImageKey": "serverinfo_tab_links",
+      "FallbackUrl": "",
+      "ContentImageKey": null,
+      "ContentFallbackUrl": null,
+      "ButtonRect": {
+        "AnchorMin": "0.118 0.15",
+        "AnchorMax": "0.224 0.228"
+      }
+    }
+  ],
+  "DefaultTab": "info"
+}

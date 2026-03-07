@@ -1,0 +1,15 @@
+{
+  "Commands to open the UI": [
+    "loottable"
+  ],
+  "Cover up free slots in containers": true,
+  "Disable loot refresh warning": false,
+  "Stacking options": {
+    "Allow stacking of items with different name": false,
+    "Allow stacking of items with different text": false
+  },
+  "Loot generation options": {
+    "Include extra items in total item count": false,
+    "Maximum amount of iterations - higher values may lead to degraded performance, but more accurate results": 100
+  }
+}

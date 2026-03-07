@@ -1,0 +1,2573 @@
+{
+  "Kits": [
+    {
+      "CardArtKey": "kitssuite_starter",
+      "CloseRect": [
+        0.95,
+        0.925,
+        1.0,
+        1.0
+      ],
+      "EditRect": [
+        0.02,
+        0.01,
+        0.14,
+        0.06
+      ],
+      "Name": "",
+      "Permission": "kitssuite.starter",
+      "CooldownSeconds": 1800,
+      "GiveMessage": "",
+      "CardArtUrl": "",
+      "ActionRect": [
+        0.110000022,
+        0.289999872,
+        0.3150006,
+        0.364999831
+      ],
+      "BtnPng_Take": "kitlucifer_btn_take",
+      "BtnPng_Cooldown": "kitlucifer_btn_cd",
+      "BtnPng_Locked": "kitlucifer_btn_locked",
+      "Main": [
+        {
+          "Shortname": "arrow.wooden",
+          "Amount": 36,
+          "Skin": 0,
+          "Ammo": 0,
+          "Magazine": 0,
+          "Slot": 19,
+          "Container": "main",
+          "Mods": []
+        },
+        {
+          "Shortname": "arrow.wooden",
+          "Amount": 64,
+          "Skin": 0,
+          "Ammo": 0,
+          "Magazine": 0,
+          "Slot": 18,
+          "Container": "main",
+          "Mods": []
+        }
+      ],
+      "Belt": [
+        {
+          "Shortname": "bow.hunting",
+          "Amount": 1,
+          "Skin": 0,
+          "Ammo": 0,
+          "Magazine": 0,
+          "Slot": 0,
+          "Container": "belt",
+          "Mods": []
+        },
+        {
+          "Shortname": "bandage",
+          "Amount": 5,
+          "Skin": 0,
+          "Ammo": 0,
+          "Magazine": 0,
+          "Slot": 1,
+          "Container": "belt",
+          "Mods": []
+        },
+        {
+          "Shortname": "pickaxe",
+          "Amount": 1,
+          "Skin": 0,
+          "Ammo": 0,
+          "Magazine": 0,
+          "Slot": 2,
+          "Container": "belt",
+          "Mods": []
+        },
+        {
+          "Shortname": "hatchet",
+          "Amount": 1,
+          "Skin": 0,
+          "Ammo": 0,
+          "Magazine": 0,
+          "Slot": 3,
+          "Container": "belt",
+          "Mods": []
+        }
+      ],
+      "Wear": [
+        {
+          "Shortname": "burlap.trousers",
+          "Amount": 1,
+          "Skin": 0,
+          "Ammo": 0,
+          "Magazine": 0,
+          "Slot": 0,
+          "Container": "wear",
+          "Mods": []
+        },
+        {
+          "Shortname": "burlap.shirt",
+          "Amount": 1,
+          "Skin": 0,
+          "Ammo": 0,
+          "Magazine": 0,
+          "Slot": 1,
+          "Container": "wear",
+          "Mods": []
+        },
+        {
+          "Shortname": "burlap.gloves.new",
+          "Amount": 1,
+          "Skin": 0,
+          "Ammo": 0,
+          "Magazine": 0,
+          "Slot": 2,
+          "Container": "wear",
+          "Mods": []
+        },
+        {
+          "Shortname": "burlap.headwrap",
+          "Amount": 1,
+          "Skin": 0,
+          "Ammo": 0,
+          "Magazine": 0,
+          "Slot": 3,
+          "Container": "wear",
+          "Mods": []
+        },
+        {
+          "Shortname": "attire.hide.boots",
+          "Amount": 1,
+          "Skin": 0,
+          "Ammo": 0,
+          "Magazine": 0,
+          "Slot": 4,
+          "Container": "wear",
+          "Mods": []
+        },
+        {
+          "Shortname": "wood.armor.jacket",
+          "Amount": 1,
+          "Skin": 0,
+          "Ammo": 0,
+          "Magazine": 0,
+          "Slot": 5,
+          "Container": "wear",
+          "Mods": []
+        },
+        {
+          "Shortname": "wood.armor.pants",
+          "Amount": 1,
+          "Skin": 0,
+          "Ammo": 0,
+          "Magazine": 0,
+          "Slot": 6,
+          "Container": "wear",
+          "Mods": []
+        }
+      ]
+    },
+    {
+      "CardArtKey": "kitssuite_builder",
+      "CloseRect": [
+        0.950000048,
+        0.925,
+        1.0,
+        1.0
+      ],
+      "EditRect": [
+        0.02,
+        0.01,
+        0.14,
+        0.06
+      ],
+      "Name": "",
+      "Permission": "kitssuite.builder",
+      "CooldownSeconds": 1800,
+      "GiveMessage": "Ну теперь ты отбабахаешь себе крутой домик :3!",
+      "CardArtUrl": "",
+      "ActionRect": [
+        0.110000022,
+        0.289999872,
+        0.3150006,
+        0.364999831
+      ],
+      "BtnPng_Take": "kitlucifer_btn_take",
+      "BtnPng_Cooldown": "kitlucifer_btn_cd",
+      "BtnPng_Locked": "kitlucifer_btn_locked",
+      "Main": [
+        {
+          "Shortname": "wood",
+          "Amount": 3000,
+          "Skin": 0,
+          "Ammo": 0,
+          "Magazine": 0,
+          "Slot": 0,
+          "Container": "main",
+          "Mods": []
+        },
+        {
+          "Shortname": "stones",
+          "Amount": 3000,
+          "Skin": 0,
+          "Ammo": 0,
+          "Magazine": 0,
+          "Slot": 1,
+          "Container": "main",
+          "Mods": []
+        },
+        {
+          "Shortname": "hammer",
+          "Amount": 1,
+          "Skin": 0,
+          "Ammo": 0,
+          "Magazine": 0,
+          "Slot": 9,
+          "Container": "main",
+          "Mods": []
+        },
+        {
+          "Shortname": "cupboard.tool",
+          "Amount": 1,
+          "Skin": 0,
+          "Ammo": 0,
+          "Magazine": 0,
+          "Slot": 2,
+          "Container": "main",
+          "Mods": []
+        },
+        {
+          "Shortname": "door.hinged.metal",
+          "Amount": 1,
+          "Skin": 0,
+          "Ammo": 0,
+          "Magazine": 0,
+          "Slot": 3,
+          "Container": "main",
+          "Mods": []
+        },
+        {
+          "Shortname": "building.planner",
+          "Amount": 1,
+          "Skin": 0,
+          "Ammo": 0,
+          "Magazine": 0,
+          "Slot": 10,
+          "Container": "main",
+          "Mods": []
+        },
+        {
+          "Shortname": "lock.key",
+          "Amount": 1,
+          "Skin": 0,
+          "Ammo": 0,
+          "Magazine": 0,
+          "Slot": 4,
+          "Container": "main",
+          "Mods": []
+        },
+        {
+          "Shortname": "box.wooden",
+          "Amount": 1,
+          "Skin": 0,
+          "Ammo": 0,
+          "Magazine": 0,
+          "Slot": 5,
+          "Container": "main",
+          "Mods": []
+        },
+        {
+          "Shortname": "box.wooden",
+          "Amount": 1,
+          "Skin": 0,
+          "Ammo": 0,
+          "Magazine": 0,
+          "Slot": 6,
+          "Container": "main",
+          "Mods": []
+        },
+        {
+          "Shortname": "furnace",
+          "Amount": 1,
+          "Skin": 0,
+          "Ammo": 0,
+          "Magazine": 0,
+          "Slot": 7,
+          "Container": "main",
+          "Mods": []
+        },
+        {
+          "Shortname": "furnace",
+          "Amount": 1,
+          "Skin": 0,
+          "Ammo": 0,
+          "Magazine": 0,
+          "Slot": 8,
+          "Container": "main",
+          "Mods": []
+        },
+        {
+          "Shortname": "sleepingbag",
+          "Amount": 1,
+          "Skin": 0,
+          "Ammo": 0,
+          "Magazine": 0,
+          "Slot": 11,
+          "Container": "main",
+          "Mods": []
+        }
+      ],
+      "Belt": [],
+      "Wear": []
+    },
+    {
+      "CardArtKey": "kitssuite_food",
+      "CloseRect": [
+        0.95,
+        0.925,
+        1.0,
+        1.0
+      ],
+      "EditRect": [
+        0.02,
+        0.01,
+        0.14,
+        0.06
+      ],
+      "Name": "",
+      "Permission": "kitssuite.food",
+      "CooldownSeconds": 600,
+      "GiveMessage": "Приятного аппетита!",
+      "CardArtUrl": "",
+      "ActionRect": [
+        0.110000022,
+        0.289999872,
+        0.3150006,
+        0.364999831
+      ],
+      "BtnPng_Take": "kitlucifer_btn_take",
+      "BtnPng_Cooldown": "kitlucifer_btn_cd",
+      "BtnPng_Locked": "kitlucifer_btn_locked",
+      "Main": [
+        {
+          "Shortname": "humanmeat.spoiled",
+          "Amount": 5,
+          "Skin": 0,
+          "Ammo": 0,
+          "Magazine": 0,
+          "Slot": 1,
+          "Container": "main",
+          "Mods": []
+        },
+        {
+          "Shortname": "humanmeat.burned",
+          "Amount": 5,
+          "Skin": 0,
+          "Ammo": 0,
+          "Magazine": 0,
+          "Slot": 0,
+          "Container": "main",
+          "Mods": []
+        },
+        {
+          "Shortname": "humanmeat.cooked",
+          "Amount": 5,
+          "Skin": 0,
+          "Ammo": 0,
+          "Magazine": 0,
+          "Slot": 2,
+          "Container": "main",
+          "Mods": []
+        }
+      ],
+      "Belt": [],
+      "Wear": []
+    },
+    {
+      "CardArtKey": "kitssuite_warlock",
+      "CloseRect": [
+        0.94,
+        0.905000031,
+        1.0,
+        1.0
+      ],
+      "EditRect": [
+        0.02,
+        0.01,
+        0.14,
+        0.06
+      ],
+      "Name": "",
+      "Permission": "kitssuite.warlock",
+      "CooldownSeconds": 3600,
+      "GiveMessage": "",
+      "CardArtUrl": "",
+      "ActionRect": [
+        0.174999982,
+        0.284999877,
+        0.360000551,
+        0.35499984
+      ],
+      "BtnPng_Take": "kitlucifer_btn_take",
+      "BtnPng_Cooldown": "kitlucifer_btn_cd",
+      "BtnPng_Locked": "kitlucifer_btn_locked",
+      "Main": [
+        {
+          "Shortname": "ammo.rifle",
+          "Amount": 100,
+          "Skin": 0,
+          "Ammo": 0,
+          "Magazine": 0,
+          "Slot": 1,
+          "Container": "main",
+          "Mods": []
+        },
+        {
+          "Shortname": "workbench1",
+          "Amount": 1,
+          "Skin": 0,
+          "Ammo": 0,
+          "Magazine": 0,
+          "Slot": 0,
+          "Container": "main",
+          "Mods": []
+        },
+        {
+          "Shortname": "ammo.pistol",
+          "Amount": 100,
+          "Skin": 0,
+          "Ammo": 0,
+          "Magazine": 0,
+          "Slot": 2,
+          "Container": "main",
+          "Mods": []
+        },
+        {
+          "Shortname": "scrap",
+          "Amount": 125,
+          "Skin": 0,
+          "Ammo": 0,
+          "Magazine": 0,
+          "Slot": 3,
+          "Container": "main",
+          "Mods": []
+        },
+        {
+          "Shortname": "crude.oil",
+          "Amount": 50,
+          "Skin": 0,
+          "Ammo": 0,
+          "Magazine": 0,
+          "Slot": 4,
+          "Container": "main",
+          "Mods": []
+        },
+        {
+          "Shortname": "lowgradefuel",
+          "Amount": 75,
+          "Skin": 0,
+          "Ammo": 0,
+          "Magazine": 0,
+          "Slot": 5,
+          "Container": "main",
+          "Mods": []
+        },
+        {
+          "Shortname": "cloth",
+          "Amount": 50,
+          "Skin": 0,
+          "Ammo": 0,
+          "Magazine": 0,
+          "Slot": 6,
+          "Container": "main",
+          "Mods": []
+        },
+        {
+          "Shortname": "leather",
+          "Amount": 50,
+          "Skin": 0,
+          "Ammo": 0,
+          "Magazine": 0,
+          "Slot": 7,
+          "Container": "main",
+          "Mods": []
+        },
+        {
+          "Shortname": "stones",
+          "Amount": 1000,
+          "Skin": 0,
+          "Ammo": 0,
+          "Magazine": 0,
+          "Slot": 8,
+          "Container": "main",
+          "Mods": []
+        },
+        {
+          "Shortname": "metal.fragments",
+          "Amount": 500,
+          "Skin": 0,
+          "Ammo": 0,
+          "Magazine": 0,
+          "Slot": 9,
+          "Container": "main",
+          "Mods": []
+        },
+        {
+          "Shortname": "metal.refined",
+          "Amount": 25,
+          "Skin": 0,
+          "Ammo": 0,
+          "Magazine": 0,
+          "Slot": 10,
+          "Container": "main",
+          "Mods": []
+        },
+        {
+          "Shortname": "wood",
+          "Amount": 2000,
+          "Skin": 0,
+          "Ammo": 0,
+          "Magazine": 0,
+          "Slot": 11,
+          "Container": "main",
+          "Mods": []
+        },
+        {
+          "Shortname": "metalblade",
+          "Amount": 5,
+          "Skin": 0,
+          "Ammo": 0,
+          "Magazine": 0,
+          "Slot": 14,
+          "Container": "main",
+          "Mods": []
+        },
+        {
+          "Shortname": "metalpipe",
+          "Amount": 5,
+          "Skin": 0,
+          "Ammo": 0,
+          "Magazine": 0,
+          "Slot": 15,
+          "Container": "main",
+          "Mods": []
+        },
+        {
+          "Shortname": "metalspring",
+          "Amount": 5,
+          "Skin": 0,
+          "Ammo": 0,
+          "Magazine": 0,
+          "Slot": 16,
+          "Container": "main",
+          "Mods": []
+        },
+        {
+          "Shortname": "roadsigns",
+          "Amount": 5,
+          "Skin": 0,
+          "Ammo": 0,
+          "Magazine": 0,
+          "Slot": 17,
+          "Container": "main",
+          "Mods": []
+        },
+        {
+          "Shortname": "sheetmetal",
+          "Amount": 5,
+          "Skin": 0,
+          "Ammo": 0,
+          "Magazine": 0,
+          "Slot": 18,
+          "Container": "main",
+          "Mods": []
+        },
+        {
+          "Shortname": "techparts",
+          "Amount": 5,
+          "Skin": 0,
+          "Ammo": 0,
+          "Magazine": 0,
+          "Slot": 19,
+          "Container": "main",
+          "Mods": []
+        },
+        {
+          "Shortname": "gears",
+          "Amount": 5,
+          "Skin": 0,
+          "Ammo": 0,
+          "Magazine": 0,
+          "Slot": 20,
+          "Container": "main",
+          "Mods": []
+        },
+        {
+          "Shortname": "tarp",
+          "Amount": 5,
+          "Skin": 0,
+          "Ammo": 0,
+          "Magazine": 0,
+          "Slot": 12,
+          "Container": "main",
+          "Mods": []
+        },
+        {
+          "Shortname": "sewingkit",
+          "Amount": 5,
+          "Skin": 0,
+          "Ammo": 0,
+          "Magazine": 0,
+          "Slot": 13,
+          "Container": "main",
+          "Mods": []
+        }
+      ],
+      "Belt": [
+        {
+          "Shortname": "syringe.medical",
+          "Amount": 2,
+          "Skin": 0,
+          "Ammo": 0,
+          "Magazine": 0,
+          "Slot": 2,
+          "Container": "belt",
+          "Mods": []
+        },
+        {
+          "Shortname": "bandage",
+          "Amount": 5,
+          "Skin": 0,
+          "Ammo": 0,
+          "Magazine": 0,
+          "Slot": 3,
+          "Container": "belt",
+          "Mods": []
+        },
+        {
+          "Shortname": "axe.salvaged",
+          "Amount": 1,
+          "Skin": 0,
+          "Ammo": 0,
+          "Magazine": 0,
+          "Slot": 4,
+          "Container": "belt",
+          "Mods": []
+        },
+        {
+          "Shortname": "icepick.salvaged",
+          "Amount": 1,
+          "Skin": 0,
+          "Ammo": 0,
+          "Magazine": 0,
+          "Slot": 5,
+          "Container": "belt",
+          "Mods": []
+        },
+        {
+          "Shortname": "smg.thompson",
+          "Amount": 1,
+          "Skin": 0,
+          "Ammo": 0,
+          "Magazine": 0,
+          "Slot": 0,
+          "Container": "belt",
+          "Mods": []
+        },
+        {
+          "Shortname": "rifle.semiauto",
+          "Amount": 1,
+          "Skin": 0,
+          "Ammo": 0,
+          "Magazine": 0,
+          "Slot": 1,
+          "Container": "belt",
+          "Mods": []
+        }
+      ],
+      "Wear": [
+        {
+          "Shortname": "roadsign.kilt",
+          "Amount": 1,
+          "Skin": 0,
+          "Ammo": 0,
+          "Magazine": 0,
+          "Slot": 0,
+          "Container": "wear",
+          "Mods": []
+        },
+        {
+          "Shortname": "shoes.boots",
+          "Amount": 1,
+          "Skin": 0,
+          "Ammo": 0,
+          "Magazine": 0,
+          "Slot": 1,
+          "Container": "wear",
+          "Mods": []
+        },
+        {
+          "Shortname": "hoodie",
+          "Amount": 1,
+          "Skin": 0,
+          "Ammo": 0,
+          "Magazine": 0,
+          "Slot": 2,
+          "Container": "wear",
+          "Mods": []
+        },
+        {
+          "Shortname": "pants",
+          "Amount": 1,
+          "Skin": 0,
+          "Ammo": 0,
+          "Magazine": 0,
+          "Slot": 4,
+          "Container": "wear",
+          "Mods": []
+        },
+        {
+          "Shortname": "roadsign.jacket",
+          "Amount": 1,
+          "Skin": 0,
+          "Ammo": 0,
+          "Magazine": 0,
+          "Slot": 3,
+          "Container": "wear",
+          "Mods": []
+        },
+        {
+          "Shortname": "roadsign.gloves",
+          "Amount": 1,
+          "Skin": 0,
+          "Ammo": 0,
+          "Magazine": 0,
+          "Slot": 5,
+          "Container": "wear",
+          "Mods": []
+        },
+        {
+          "Shortname": "coffeecan.helmet",
+          "Amount": 1,
+          "Skin": 0,
+          "Ammo": 0,
+          "Magazine": 0,
+          "Slot": 6,
+          "Container": "wear",
+          "Mods": []
+        },
+        {
+          "Shortname": "smallbackpack",
+          "Amount": 1,
+          "Skin": 0,
+          "Ammo": 0,
+          "Magazine": 0,
+          "Slot": 7,
+          "Container": "wear",
+          "Mods": []
+        }
+      ]
+    },
+    {
+      "CardArtKey": "kitssuite_lucifer",
+      "CloseRect": [
+        0.94,
+        0.905000031,
+        1.0,
+        1.0
+      ],
+      "EditRect": [
+        0.02,
+        0.01,
+        0.14,
+        0.06
+      ],
+      "Name": "",
+      "Permission": "kitssuite.lucifer",
+      "CooldownSeconds": 3600,
+      "GiveMessage": "Никто не смеет встать на твоем пути! УБИВАЙ ВСЕХ КОГО ВИДИШЬ!",
+      "CardArtUrl": "",
+      "ActionRect": [
+        0.115,
+        0.29,
+        0.295000345,
+        0.360000044
+      ],
+      "BtnPng_Take": "kitlucifer_btn_take",
+      "BtnPng_Cooldown": "kitlucifer_btn_cd",
+      "BtnPng_Locked": "kitlucifer_btn_locked",
+      "Main": [
+        {
+          "Shortname": "rocket.launcher",
+          "Amount": 1,
+          "Skin": 0,
+          "Ammo": 0,
+          "Magazine": 0,
+          "Slot": 2,
+          "Container": "main",
+          "Mods": []
+        },
+        {
+          "Shortname": "ammo.rifle",
+          "Amount": 200,
+          "Skin": 0,
+          "Ammo": 0,
+          "Magazine": 0,
+          "Slot": 1,
+          "Container": "main",
+          "Mods": []
+        },
+        {
+          "Shortname": "workbench3",
+          "Amount": 1,
+          "Skin": 0,
+          "Ammo": 0,
+          "Magazine": 0,
+          "Slot": 0,
+          "Container": "main",
+          "Mods": []
+        },
+        {
+          "Shortname": "ammo.rocket.basic",
+          "Amount": 10,
+          "Skin": 0,
+          "Ammo": 0,
+          "Magazine": 0,
+          "Slot": 3,
+          "Container": "main",
+          "Mods": []
+        },
+        {
+          "Shortname": "hazmatsuit.arcticsuit",
+          "Amount": 1,
+          "Skin": 0,
+          "Ammo": 0,
+          "Magazine": 0,
+          "Slot": 4,
+          "Container": "main",
+          "Mods": []
+        },
+        {
+          "Shortname": "scrap",
+          "Amount": 550,
+          "Skin": 0,
+          "Ammo": 0,
+          "Magazine": 0,
+          "Slot": 5,
+          "Container": "main",
+          "Mods": []
+        },
+        {
+          "Shortname": "cloth",
+          "Amount": 500,
+          "Skin": 0,
+          "Ammo": 0,
+          "Magazine": 0,
+          "Slot": 6,
+          "Container": "main",
+          "Mods": []
+        },
+        {
+          "Shortname": "leather",
+          "Amount": 500,
+          "Skin": 0,
+          "Ammo": 0,
+          "Magazine": 0,
+          "Slot": 7,
+          "Container": "main",
+          "Mods": []
+        },
+        {
+          "Shortname": "stones",
+          "Amount": 5000,
+          "Skin": 0,
+          "Ammo": 0,
+          "Magazine": 0,
+          "Slot": 8,
+          "Container": "main",
+          "Mods": []
+        },
+        {
+          "Shortname": "metal.fragments",
+          "Amount": 2000,
+          "Skin": 0,
+          "Ammo": 0,
+          "Magazine": 0,
+          "Slot": 9,
+          "Container": "main",
+          "Mods": []
+        },
+        {
+          "Shortname": "metal.refined",
+          "Amount": 200,
+          "Skin": 0,
+          "Ammo": 0,
+          "Magazine": 0,
+          "Slot": 10,
+          "Container": "main",
+          "Mods": []
+        },
+        {
+          "Shortname": "wood",
+          "Amount": 10000,
+          "Skin": 0,
+          "Ammo": 0,
+          "Magazine": 0,
+          "Slot": 11,
+          "Container": "main",
+          "Mods": []
+        },
+        {
+          "Shortname": "crude.oil",
+          "Amount": 250,
+          "Skin": 0,
+          "Ammo": 0,
+          "Magazine": 0,
+          "Slot": 12,
+          "Container": "main",
+          "Mods": []
+        },
+        {
+          "Shortname": "lowgradefuel",
+          "Amount": 500,
+          "Skin": 0,
+          "Ammo": 0,
+          "Magazine": 0,
+          "Slot": 13,
+          "Container": "main",
+          "Mods": []
+        },
+        {
+          "Shortname": "metalblade",
+          "Amount": 30,
+          "Skin": 0,
+          "Ammo": 0,
+          "Magazine": 0,
+          "Slot": 14,
+          "Container": "main",
+          "Mods": []
+        },
+        {
+          "Shortname": "metalpipe",
+          "Amount": 30,
+          "Skin": 0,
+          "Ammo": 0,
+          "Magazine": 0,
+          "Slot": 15,
+          "Container": "main",
+          "Mods": []
+        },
+        {
+          "Shortname": "metalspring",
+          "Amount": 30,
+          "Skin": 0,
+          "Ammo": 0,
+          "Magazine": 0,
+          "Slot": 16,
+          "Container": "main",
+          "Mods": []
+        },
+        {
+          "Shortname": "roadsigns",
+          "Amount": 30,
+          "Skin": 0,
+          "Ammo": 0,
+          "Magazine": 0,
+          "Slot": 17,
+          "Container": "main",
+          "Mods": []
+        },
+        {
+          "Shortname": "semibody",
+          "Amount": 10,
+          "Skin": 0,
+          "Ammo": 0,
+          "Magazine": 0,
+          "Slot": 18,
+          "Container": "main",
+          "Mods": []
+        },
+        {
+          "Shortname": "riflebody",
+          "Amount": 10,
+          "Skin": 0,
+          "Ammo": 0,
+          "Magazine": 0,
+          "Slot": 19,
+          "Container": "main",
+          "Mods": []
+        },
+        {
+          "Shortname": "smgbody",
+          "Amount": 10,
+          "Skin": 0,
+          "Ammo": 0,
+          "Magazine": 0,
+          "Slot": 20,
+          "Container": "main",
+          "Mods": []
+        },
+        {
+          "Shortname": "sheetmetal",
+          "Amount": 30,
+          "Skin": 0,
+          "Ammo": 0,
+          "Magazine": 0,
+          "Slot": 21,
+          "Container": "main",
+          "Mods": []
+        },
+        {
+          "Shortname": "techparts",
+          "Amount": 30,
+          "Skin": 0,
+          "Ammo": 0,
+          "Magazine": 0,
+          "Slot": 22,
+          "Container": "main",
+          "Mods": []
+        },
+        {
+          "Shortname": "gears",
+          "Amount": 30,
+          "Skin": 0,
+          "Ammo": 0,
+          "Magazine": 0,
+          "Slot": 23,
+          "Container": "main",
+          "Mods": []
+        }
+      ],
+      "Belt": [
+        {
+          "Shortname": "lmg.m249",
+          "Amount": 1,
+          "Skin": 0,
+          "Ammo": 0,
+          "Magazine": 0,
+          "Slot": 0,
+          "Container": "belt",
+          "Mods": []
+        },
+        {
+          "Shortname": "rifle.l96",
+          "Amount": 1,
+          "Skin": 0,
+          "Ammo": 0,
+          "Magazine": 0,
+          "Slot": 1,
+          "Container": "belt",
+          "Mods": [
+            "weapon.mod.8x.scope",
+            "weapon.mod.silencer",
+            "weapon.mod.lasersight"
+          ]
+        },
+        {
+          "Shortname": "syringe.medical",
+          "Amount": 10,
+          "Skin": 0,
+          "Ammo": 0,
+          "Magazine": 0,
+          "Slot": 2,
+          "Container": "belt",
+          "Mods": []
+        },
+        {
+          "Shortname": "supply.signal",
+          "Amount": 2,
+          "Skin": 0,
+          "Ammo": 0,
+          "Magazine": 0,
+          "Slot": 3,
+          "Container": "belt",
+          "Mods": []
+        },
+        {
+          "Shortname": "chainsaw",
+          "Amount": 1,
+          "Skin": 0,
+          "Ammo": 0,
+          "Magazine": 0,
+          "Slot": 4,
+          "Container": "belt",
+          "Mods": []
+        },
+        {
+          "Shortname": "jackhammer",
+          "Amount": 1,
+          "Skin": 0,
+          "Ammo": 0,
+          "Magazine": 0,
+          "Slot": 5,
+          "Container": "belt",
+          "Mods": []
+        }
+      ],
+      "Wear": [
+        {
+          "Shortname": "roadsign.kilt",
+          "Amount": 1,
+          "Skin": 0,
+          "Ammo": 0,
+          "Magazine": 0,
+          "Slot": 0,
+          "Container": "wear",
+          "Mods": []
+        },
+        {
+          "Shortname": "shoes.boots",
+          "Amount": 1,
+          "Skin": 0,
+          "Ammo": 0,
+          "Magazine": 0,
+          "Slot": 1,
+          "Container": "wear",
+          "Mods": []
+        },
+        {
+          "Shortname": "hoodie",
+          "Amount": 1,
+          "Skin": 0,
+          "Ammo": 0,
+          "Magazine": 0,
+          "Slot": 2,
+          "Container": "wear",
+          "Mods": []
+        },
+        {
+          "Shortname": "metal.facemask",
+          "Amount": 1,
+          "Skin": 0,
+          "Ammo": 0,
+          "Magazine": 0,
+          "Slot": 3,
+          "Container": "wear",
+          "Mods": []
+        },
+        {
+          "Shortname": "pants",
+          "Amount": 1,
+          "Skin": 0,
+          "Ammo": 0,
+          "Magazine": 0,
+          "Slot": 4,
+          "Container": "wear",
+          "Mods": []
+        },
+        {
+          "Shortname": "tactical.gloves",
+          "Amount": 1,
+          "Skin": 0,
+          "Ammo": 0,
+          "Magazine": 0,
+          "Slot": 5,
+          "Container": "wear",
+          "Mods": []
+        },
+        {
+          "Shortname": "metal.plate.torso",
+          "Amount": 1,
+          "Skin": 0,
+          "Ammo": 0,
+          "Magazine": 0,
+          "Slot": 6,
+          "Container": "wear",
+          "Mods": []
+        },
+        {
+          "Shortname": "kriegbackpack",
+          "Amount": 1,
+          "Skin": 0,
+          "Ammo": 0,
+          "Magazine": 0,
+          "Slot": 7,
+          "Container": "wear",
+          "Mods": []
+        }
+      ]
+    },
+    {
+      "CardArtKey": "kitssuite_daemon",
+      "CloseRect": [
+        0.94,
+        0.905000031,
+        1.0,
+        1.0
+      ],
+      "EditRect": [
+        0.02,
+        0.01,
+        0.14,
+        0.06
+      ],
+      "Name": "",
+      "Permission": "kitssuite.daemon",
+      "CooldownSeconds": 3600,
+      "GiveMessage": "",
+      "CardArtUrl": "",
+      "ActionRect": [
+        0.189999968,
+        0.314999849,
+        0.335000575,
+        0.379999816
+      ],
+      "BtnPng_Take": "kitlucifer_btn_take",
+      "BtnPng_Cooldown": "kitlucifer_btn_cd",
+      "BtnPng_Locked": "kitlucifer_btn_locked",
+      "Main": [
+        {
+          "Shortname": "ammo.rifle",
+          "Amount": 200,
+          "Skin": 0,
+          "Ammo": 0,
+          "Magazine": 0,
+          "Slot": 1,
+          "Container": "main",
+          "Mods": []
+        },
+        {
+          "Shortname": "scrap",
+          "Amount": 300,
+          "Skin": 0,
+          "Ammo": 0,
+          "Magazine": 0,
+          "Slot": 5,
+          "Container": "main",
+          "Mods": []
+        },
+        {
+          "Shortname": "cloth",
+          "Amount": 200,
+          "Skin": 0,
+          "Ammo": 0,
+          "Magazine": 0,
+          "Slot": 6,
+          "Container": "main",
+          "Mods": []
+        },
+        {
+          "Shortname": "leather",
+          "Amount": 200,
+          "Skin": 0,
+          "Ammo": 0,
+          "Magazine": 0,
+          "Slot": 7,
+          "Container": "main",
+          "Mods": []
+        },
+        {
+          "Shortname": "stones",
+          "Amount": 2500,
+          "Skin": 0,
+          "Ammo": 0,
+          "Magazine": 0,
+          "Slot": 8,
+          "Container": "main",
+          "Mods": []
+        },
+        {
+          "Shortname": "metal.fragments",
+          "Amount": 1250,
+          "Skin": 0,
+          "Ammo": 0,
+          "Magazine": 0,
+          "Slot": 9,
+          "Container": "main",
+          "Mods": []
+        },
+        {
+          "Shortname": "metal.refined",
+          "Amount": 100,
+          "Skin": 0,
+          "Ammo": 0,
+          "Magazine": 0,
+          "Slot": 10,
+          "Container": "main",
+          "Mods": []
+        },
+        {
+          "Shortname": "wood",
+          "Amount": 5000,
+          "Skin": 0,
+          "Ammo": 0,
+          "Magazine": 0,
+          "Slot": 11,
+          "Container": "main",
+          "Mods": []
+        },
+        {
+          "Shortname": "crude.oil",
+          "Amount": 125,
+          "Skin": 0,
+          "Ammo": 0,
+          "Magazine": 0,
+          "Slot": 12,
+          "Container": "main",
+          "Mods": []
+        },
+        {
+          "Shortname": "metalblade",
+          "Amount": 15,
+          "Skin": 0,
+          "Ammo": 0,
+          "Magazine": 0,
+          "Slot": 14,
+          "Container": "main",
+          "Mods": []
+        },
+        {
+          "Shortname": "metalpipe",
+          "Amount": 15,
+          "Skin": 0,
+          "Ammo": 0,
+          "Magazine": 0,
+          "Slot": 15,
+          "Container": "main",
+          "Mods": []
+        },
+        {
+          "Shortname": "metalspring",
+          "Amount": 15,
+          "Skin": 0,
+          "Ammo": 0,
+          "Magazine": 0,
+          "Slot": 16,
+          "Container": "main",
+          "Mods": []
+        },
+        {
+          "Shortname": "roadsigns",
+          "Amount": 15,
+          "Skin": 0,
+          "Ammo": 0,
+          "Magazine": 0,
+          "Slot": 17,
+          "Container": "main",
+          "Mods": []
+        },
+        {
+          "Shortname": "semibody",
+          "Amount": 5,
+          "Skin": 0,
+          "Ammo": 0,
+          "Magazine": 0,
+          "Slot": 18,
+          "Container": "main",
+          "Mods": []
+        },
+        {
+          "Shortname": "riflebody",
+          "Amount": 5,
+          "Skin": 0,
+          "Ammo": 0,
+          "Magazine": 0,
+          "Slot": 19,
+          "Container": "main",
+          "Mods": []
+        },
+        {
+          "Shortname": "smgbody",
+          "Amount": 5,
+          "Skin": 0,
+          "Ammo": 0,
+          "Magazine": 0,
+          "Slot": 20,
+          "Container": "main",
+          "Mods": []
+        },
+        {
+          "Shortname": "sheetmetal",
+          "Amount": 30,
+          "Skin": 0,
+          "Ammo": 0,
+          "Magazine": 0,
+          "Slot": 21,
+          "Container": "main",
+          "Mods": []
+        },
+        {
+          "Shortname": "techparts",
+          "Amount": 15,
+          "Skin": 0,
+          "Ammo": 0,
+          "Magazine": 0,
+          "Slot": 22,
+          "Container": "main",
+          "Mods": []
+        },
+        {
+          "Shortname": "gears",
+          "Amount": 15,
+          "Skin": 0,
+          "Ammo": 0,
+          "Magazine": 0,
+          "Slot": 23,
+          "Container": "main",
+          "Mods": []
+        },
+        {
+          "Shortname": "workbench2",
+          "Amount": 1,
+          "Skin": 0,
+          "Ammo": 0,
+          "Magazine": 0,
+          "Slot": 0,
+          "Container": "main",
+          "Mods": []
+        },
+        {
+          "Shortname": "supply.signal",
+          "Amount": 1,
+          "Skin": 0,
+          "Ammo": 0,
+          "Magazine": 0,
+          "Slot": 2,
+          "Container": "main",
+          "Mods": []
+        },
+        {
+          "Shortname": "grenade.f1",
+          "Amount": 2,
+          "Skin": 0,
+          "Ammo": 0,
+          "Magazine": 0,
+          "Slot": 3,
+          "Container": "main",
+          "Mods": []
+        },
+        {
+          "Shortname": "explosive.satchel",
+          "Amount": 12,
+          "Skin": 0,
+          "Ammo": 0,
+          "Magazine": 0,
+          "Slot": 4,
+          "Container": "main",
+          "Mods": []
+        },
+        {
+          "Shortname": "lowgradefuel",
+          "Amount": 125,
+          "Skin": 0,
+          "Ammo": 0,
+          "Magazine": 0,
+          "Slot": 13,
+          "Container": "main",
+          "Mods": []
+        }
+      ],
+      "Belt": [
+        {
+          "Shortname": "syringe.medical",
+          "Amount": 5,
+          "Skin": 0,
+          "Ammo": 0,
+          "Magazine": 0,
+          "Slot": 2,
+          "Container": "belt",
+          "Mods": []
+        },
+        {
+          "Shortname": "chainsaw",
+          "Amount": 1,
+          "Skin": 0,
+          "Ammo": 0,
+          "Magazine": 0,
+          "Slot": 3,
+          "Container": "belt",
+          "Mods": []
+        },
+        {
+          "Shortname": "jackhammer",
+          "Amount": 1,
+          "Skin": 0,
+          "Ammo": 0,
+          "Magazine": 0,
+          "Slot": 4,
+          "Container": "belt",
+          "Mods": []
+        },
+        {
+          "Shortname": "rifle.ak",
+          "Amount": 1,
+          "Skin": 0,
+          "Ammo": 0,
+          "Magazine": 0,
+          "Slot": 0,
+          "Container": "belt",
+          "Mods": []
+        },
+        {
+          "Shortname": "rifle.bolt",
+          "Amount": 1,
+          "Skin": 0,
+          "Ammo": 0,
+          "Magazine": 0,
+          "Slot": 1,
+          "Container": "belt",
+          "Mods": []
+        }
+      ],
+      "Wear": [
+        {
+          "Shortname": "roadsign.kilt",
+          "Amount": 1,
+          "Skin": 0,
+          "Ammo": 0,
+          "Magazine": 0,
+          "Slot": 0,
+          "Container": "wear",
+          "Mods": []
+        },
+        {
+          "Shortname": "shoes.boots",
+          "Amount": 1,
+          "Skin": 0,
+          "Ammo": 0,
+          "Magazine": 0,
+          "Slot": 1,
+          "Container": "wear",
+          "Mods": []
+        },
+        {
+          "Shortname": "hoodie",
+          "Amount": 1,
+          "Skin": 0,
+          "Ammo": 0,
+          "Magazine": 0,
+          "Slot": 2,
+          "Container": "wear",
+          "Mods": []
+        },
+        {
+          "Shortname": "metal.facemask",
+          "Amount": 1,
+          "Skin": 0,
+          "Ammo": 0,
+          "Magazine": 0,
+          "Slot": 3,
+          "Container": "wear",
+          "Mods": []
+        },
+        {
+          "Shortname": "pants",
+          "Amount": 1,
+          "Skin": 0,
+          "Ammo": 0,
+          "Magazine": 0,
+          "Slot": 4,
+          "Container": "wear",
+          "Mods": []
+        },
+        {
+          "Shortname": "metal.plate.torso",
+          "Amount": 1,
+          "Skin": 0,
+          "Ammo": 0,
+          "Magazine": 0,
+          "Slot": 6,
+          "Container": "wear",
+          "Mods": []
+        },
+        {
+          "Shortname": "burlap.gloves",
+          "Amount": 1,
+          "Skin": 0,
+          "Ammo": 0,
+          "Magazine": 0,
+          "Slot": 5,
+          "Container": "wear",
+          "Mods": []
+        },
+        {
+          "Shortname": "largebackpack",
+          "Amount": 1,
+          "Skin": 0,
+          "Ammo": 0,
+          "Magazine": 0,
+          "Slot": 7,
+          "Container": "wear",
+          "Mods": []
+        }
+      ]
+    },
+    {
+      "CardArtKey": null,
+      "CloseRect": [
+        0.96,
+        0.94,
+        0.995,
+        0.99
+      ],
+      "EditRect": [
+        0.02,
+        0.01,
+        0.14,
+        0.06
+      ],
+      "Name": "kitbandit1",
+      "Permission": "",
+      "CooldownSeconds": 0,
+      "GiveMessage": "",
+      "CardArtUrl": "",
+      "ActionRect": [
+        0.06,
+        0.05,
+        0.94,
+        0.17
+      ],
+      "BtnPng_Take": "kitlucifer_btn_take",
+      "BtnPng_Cooldown": "kitlucifer_btn_cd",
+      "BtnPng_Locked": "kitlucifer_btn_locked",
+      "Main": [],
+      "Belt": [
+        {
+          "Shortname": "rifle.semiauto",
+          "Amount": 1,
+          "Skin": 0,
+          "Ammo": 0,
+          "Magazine": 0,
+          "Slot": 0,
+          "Container": "belt",
+          "Mods": []
+        }
+      ],
+      "Wear": [
+        {
+          "Shortname": "largebackpack",
+          "Amount": 1,
+          "Skin": 0,
+          "Ammo": 0,
+          "Magazine": 0,
+          "Slot": 7,
+          "Container": "wear",
+          "Mods": []
+        },
+        {
+          "Shortname": "wood.armor.pants",
+          "Amount": 1,
+          "Skin": 0,
+          "Ammo": 0,
+          "Magazine": 0,
+          "Slot": 1,
+          "Container": "wear",
+          "Mods": []
+        },
+        {
+          "Shortname": "burlap.gloves",
+          "Amount": 1,
+          "Skin": 0,
+          "Ammo": 0,
+          "Magazine": 0,
+          "Slot": 2,
+          "Container": "wear",
+          "Mods": []
+        },
+        {
+          "Shortname": "attire.hide.boots",
+          "Amount": 1,
+          "Skin": 0,
+          "Ammo": 0,
+          "Magazine": 0,
+          "Slot": 6,
+          "Container": "wear",
+          "Mods": []
+        },
+        {
+          "Shortname": "pants",
+          "Amount": 1,
+          "Skin": 0,
+          "Ammo": 0,
+          "Magazine": 0,
+          "Slot": 0,
+          "Container": "wear",
+          "Mods": []
+        },
+        {
+          "Shortname": "jacket",
+          "Amount": 1,
+          "Skin": 0,
+          "Ammo": 0,
+          "Magazine": 0,
+          "Slot": 3,
+          "Container": "wear",
+          "Mods": []
+        },
+        {
+          "Shortname": "mask.balaclava",
+          "Amount": 1,
+          "Skin": 0,
+          "Ammo": 0,
+          "Magazine": 0,
+          "Slot": 4,
+          "Container": "wear",
+          "Mods": []
+        },
+        {
+          "Shortname": "tshirt.long",
+          "Amount": 1,
+          "Skin": 0,
+          "Ammo": 0,
+          "Magazine": 0,
+          "Slot": 5,
+          "Container": "wear",
+          "Mods": []
+        }
+      ]
+    },
+    {
+      "CardArtKey": null,
+      "CloseRect": [
+        0.96,
+        0.94,
+        0.995,
+        0.99
+      ],
+      "EditRect": [
+        0.02,
+        0.01,
+        0.14,
+        0.06
+      ],
+      "Name": "kitbandit2",
+      "Permission": "",
+      "CooldownSeconds": 0,
+      "GiveMessage": "",
+      "CardArtUrl": "",
+      "ActionRect": [
+        0.06,
+        0.05,
+        0.94,
+        0.17
+      ],
+      "BtnPng_Take": "kitlucifer_btn_take",
+      "BtnPng_Cooldown": "kitlucifer_btn_cd",
+      "BtnPng_Locked": "kitlucifer_btn_locked",
+      "Main": [],
+      "Belt": [
+        {
+          "Shortname": "smg.2",
+          "Amount": 1,
+          "Skin": 0,
+          "Ammo": 0,
+          "Magazine": 0,
+          "Slot": 0,
+          "Container": "belt",
+          "Mods": []
+        }
+      ],
+      "Wear": [
+        {
+          "Shortname": "largebackpack",
+          "Amount": 1,
+          "Skin": 0,
+          "Ammo": 0,
+          "Magazine": 0,
+          "Slot": 7,
+          "Container": "wear",
+          "Mods": []
+        },
+        {
+          "Shortname": "burlap.gloves",
+          "Amount": 1,
+          "Skin": 0,
+          "Ammo": 0,
+          "Magazine": 0,
+          "Slot": 2,
+          "Container": "wear",
+          "Mods": []
+        },
+        {
+          "Shortname": "attire.hide.boots",
+          "Amount": 1,
+          "Skin": 0,
+          "Ammo": 0,
+          "Magazine": 0,
+          "Slot": 6,
+          "Container": "wear",
+          "Mods": []
+        },
+        {
+          "Shortname": "pants",
+          "Amount": 1,
+          "Skin": 0,
+          "Ammo": 0,
+          "Magazine": 0,
+          "Slot": 0,
+          "Container": "wear",
+          "Mods": []
+        },
+        {
+          "Shortname": "hat.beenie",
+          "Amount": 1,
+          "Skin": 0,
+          "Ammo": 0,
+          "Magazine": 0,
+          "Slot": 1,
+          "Container": "wear",
+          "Mods": []
+        },
+        {
+          "Shortname": "sunglasses",
+          "Amount": 1,
+          "Skin": 0,
+          "Ammo": 0,
+          "Magazine": 0,
+          "Slot": 3,
+          "Container": "wear",
+          "Mods": []
+        },
+        {
+          "Shortname": "lumberjack hoodie",
+          "Amount": 1,
+          "Skin": 0,
+          "Ammo": 0,
+          "Magazine": 0,
+          "Slot": 4,
+          "Container": "wear",
+          "Mods": []
+        },
+        {
+          "Shortname": "wood.armor.jacket",
+          "Amount": 1,
+          "Skin": 0,
+          "Ammo": 0,
+          "Magazine": 0,
+          "Slot": 5,
+          "Container": "wear",
+          "Mods": []
+        }
+      ]
+    },
+    {
+      "CardArtKey": null,
+      "CloseRect": [
+        0.96,
+        0.94,
+        0.995,
+        0.99
+      ],
+      "EditRect": [
+        0.02,
+        0.01,
+        0.14,
+        0.06
+      ],
+      "Name": "kitcobalt1",
+      "Permission": "",
+      "CooldownSeconds": 0,
+      "GiveMessage": "",
+      "CardArtUrl": "",
+      "ActionRect": [
+        0.06,
+        0.05,
+        0.94,
+        0.17
+      ],
+      "BtnPng_Take": "kitlucifer_btn_take",
+      "BtnPng_Cooldown": "kitlucifer_btn_cd",
+      "BtnPng_Locked": "kitlucifer_btn_locked",
+      "Main": [],
+      "Belt": [
+        {
+          "Shortname": "rifle.sks",
+          "Amount": 1,
+          "Skin": 0,
+          "Ammo": 0,
+          "Magazine": 0,
+          "Slot": 0,
+          "Container": "belt",
+          "Mods": []
+        }
+      ],
+      "Wear": [
+        {
+          "Shortname": "oubreak_scientist",
+          "Amount": 1,
+          "Skin": 0,
+          "Ammo": 0,
+          "Magazine": 0,
+          "Slot": 0,
+          "Container": "wear",
+          "Mods": []
+        }
+      ]
+    },
+    {
+      "CardArtKey": null,
+      "CloseRect": [
+        0.96,
+        0.94,
+        0.995,
+        0.99
+      ],
+      "EditRect": [
+        0.02,
+        0.01,
+        0.14,
+        0.06
+      ],
+      "Name": "kitcobalt2",
+      "Permission": "",
+      "CooldownSeconds": 0,
+      "GiveMessage": "",
+      "CardArtUrl": "",
+      "ActionRect": [
+        0.06,
+        0.05,
+        0.94,
+        0.17
+      ],
+      "BtnPng_Take": "kitlucifer_btn_take",
+      "BtnPng_Cooldown": "kitlucifer_btn_cd",
+      "BtnPng_Locked": "kitlucifer_btn_locked",
+      "Main": [],
+      "Belt": [
+        {
+          "Shortname": "smg.mp5",
+          "Amount": 1,
+          "Skin": 0,
+          "Ammo": 0,
+          "Magazine": 0,
+          "Slot": 0,
+          "Container": "belt",
+          "Mods": []
+        }
+      ],
+      "Wear": [
+        {
+          "Shortname": "hazmatsuit.kick",
+          "Amount": 1,
+          "Skin": 0,
+          "Ammo": 0,
+          "Magazine": 0,
+          "Slot": 0,
+          "Container": "wear",
+          "Mods": []
+        }
+      ]
+    },
+    {
+      "CardArtKey": null,
+      "CloseRect": [
+        0.96,
+        0.94,
+        0.995,
+        0.99
+      ],
+      "EditRect": [
+        0.02,
+        0.01,
+        0.14,
+        0.06
+      ],
+      "Name": "kitcobalt3",
+      "Permission": "",
+      "CooldownSeconds": 0,
+      "GiveMessage": "",
+      "CardArtUrl": "",
+      "ActionRect": [
+        0.06,
+        0.05,
+        0.94,
+        0.17
+      ],
+      "BtnPng_Take": "kitlucifer_btn_take",
+      "BtnPng_Cooldown": "kitlucifer_btn_cd",
+      "BtnPng_Locked": "kitlucifer_btn_locked",
+      "Main": [],
+      "Belt": [
+        {
+          "Shortname": "rifle.m39",
+          "Amount": 1,
+          "Skin": 0,
+          "Ammo": 0,
+          "Magazine": 0,
+          "Slot": 0,
+          "Container": "belt",
+          "Mods": []
+        }
+      ],
+      "Wear": [
+        {
+          "Shortname": "hazmatsuit_scientist_peacekeeper",
+          "Amount": 1,
+          "Skin": 0,
+          "Ammo": 0,
+          "Magazine": 0,
+          "Slot": 0,
+          "Container": "wear",
+          "Mods": []
+        }
+      ]
+    },
+    {
+      "CardArtKey": null,
+      "CloseRect": [
+        0.96,
+        0.94,
+        0.995,
+        0.99
+      ],
+      "EditRect": [
+        0.02,
+        0.01,
+        0.14,
+        0.06
+      ],
+      "Name": "kitpmc1",
+      "Permission": "",
+      "CooldownSeconds": 0,
+      "GiveMessage": "",
+      "CardArtUrl": "",
+      "ActionRect": [
+        0.06,
+        0.05,
+        0.94,
+        0.17
+      ],
+      "BtnPng_Take": "kitlucifer_btn_take",
+      "BtnPng_Cooldown": "kitlucifer_btn_cd",
+      "BtnPng_Locked": "kitlucifer_btn_locked",
+      "Main": [],
+      "Belt": [
+        {
+          "Shortname": "rifle.lr300.space",
+          "Amount": 1,
+          "Skin": 0,
+          "Ammo": 0,
+          "Magazine": 0,
+          "Slot": 0,
+          "Container": "belt",
+          "Mods": []
+        }
+      ],
+      "Wear": [
+        {
+          "Shortname": "hazmatsuit_scientist_nvgm",
+          "Amount": 1,
+          "Skin": 0,
+          "Ammo": 0,
+          "Magazine": 0,
+          "Slot": 0,
+          "Container": "wear",
+          "Mods": []
+        }
+      ]
+    },
+    {
+      "CardArtKey": null,
+      "CloseRect": [
+        0.96,
+        0.94,
+        0.995,
+        0.99
+      ],
+      "EditRect": [
+        0.02,
+        0.01,
+        0.14,
+        0.06
+      ],
+      "Name": "kitpmc2",
+      "Permission": "",
+      "CooldownSeconds": 0,
+      "GiveMessage": "",
+      "CardArtUrl": "",
+      "ActionRect": [
+        0.06,
+        0.05,
+        0.94,
+        0.17
+      ],
+      "BtnPng_Take": "kitlucifer_btn_take",
+      "BtnPng_Cooldown": "kitlucifer_btn_cd",
+      "BtnPng_Locked": "kitlucifer_btn_locked",
+      "Main": [],
+      "Belt": [
+        {
+          "Shortname": "lmg.m249",
+          "Amount": 1,
+          "Skin": 0,
+          "Ammo": 0,
+          "Magazine": 0,
+          "Slot": 0,
+          "Container": "belt",
+          "Mods": []
+        }
+      ],
+      "Wear": [
+        {
+          "Shortname": "scientistsuit_heavy",
+          "Amount": 1,
+          "Skin": 0,
+          "Ammo": 0,
+          "Magazine": 0,
+          "Slot": 0,
+          "Container": "wear",
+          "Mods": []
+        }
+      ]
+    },
+    {
+      "CardArtKey": null,
+      "CloseRect": [
+        0.96,
+        0.94,
+        0.995,
+        0.99
+      ],
+      "EditRect": [
+        0.02,
+        0.01,
+        0.14,
+        0.06
+      ],
+      "Name": "kitpmc3",
+      "Permission": "",
+      "CooldownSeconds": 0,
+      "GiveMessage": "",
+      "CardArtUrl": "",
+      "ActionRect": [
+        0.06,
+        0.05,
+        0.94,
+        0.17
+      ],
+      "BtnPng_Take": "kitlucifer_btn_take",
+      "BtnPng_Cooldown": "kitlucifer_btn_cd",
+      "BtnPng_Locked": "kitlucifer_btn_locked",
+      "Main": [],
+      "Belt": [
+        {
+          "Shortname": "rifle.ak",
+          "Amount": 1,
+          "Skin": 2868724187,
+          "Ammo": 0,
+          "Magazine": 0,
+          "Slot": 0,
+          "Container": "belt",
+          "Mods": []
+        }
+      ],
+      "Wear": [
+        {
+          "Shortname": "kriegbackpack",
+          "Amount": 1,
+          "Skin": 0,
+          "Ammo": 0,
+          "Magazine": 0,
+          "Slot": 7,
+          "Container": "wear",
+          "Mods": []
+        },
+        {
+          "Shortname": "pants",
+          "Amount": 1,
+          "Skin": 10048,
+          "Ammo": 0,
+          "Magazine": 0,
+          "Slot": 0,
+          "Container": "wear",
+          "Mods": []
+        },
+        {
+          "Shortname": "metal.plate.torso",
+          "Amount": 1,
+          "Skin": 0,
+          "Ammo": 0,
+          "Magazine": 0,
+          "Slot": 1,
+          "Container": "wear",
+          "Mods": []
+        },
+        {
+          "Shortname": "roadsign.kilt",
+          "Amount": 1,
+          "Skin": 0,
+          "Ammo": 0,
+          "Magazine": 0,
+          "Slot": 2,
+          "Container": "wear",
+          "Mods": []
+        },
+        {
+          "Shortname": "hoodie",
+          "Amount": 1,
+          "Skin": 10142,
+          "Ammo": 0,
+          "Magazine": 0,
+          "Slot": 3,
+          "Container": "wear",
+          "Mods": []
+        },
+        {
+          "Shortname": "shoes.boots",
+          "Amount": 1,
+          "Skin": 10034,
+          "Ammo": 0,
+          "Magazine": 0,
+          "Slot": 4,
+          "Container": "wear",
+          "Mods": []
+        },
+        {
+          "Shortname": "tactical.gloves",
+          "Amount": 1,
+          "Skin": 0,
+          "Ammo": 0,
+          "Magazine": 0,
+          "Slot": 6,
+          "Container": "wear",
+          "Mods": []
+        },
+        {
+          "Shortname": "hat.gas.mask",
+          "Amount": 1,
+          "Skin": 0,
+          "Ammo": 0,
+          "Magazine": 0,
+          "Slot": 5,
+          "Container": "wear",
+          "Mods": []
+        }
+      ]
+    },
+    {
+      "CardArtKey": null,
+      "CloseRect": [
+        0.96,
+        0.94,
+        0.995,
+        0.99
+      ],
+      "EditRect": [
+        0.02,
+        0.01,
+        0.14,
+        0.06
+      ],
+      "Name": "kitbandit3",
+      "Permission": "",
+      "CooldownSeconds": 0,
+      "GiveMessage": "",
+      "CardArtUrl": "",
+      "ActionRect": [
+        0.06,
+        0.05,
+        0.94,
+        0.17
+      ],
+      "BtnPng_Take": "kitlucifer_btn_take",
+      "BtnPng_Cooldown": "kitlucifer_btn_cd",
+      "BtnPng_Locked": "kitlucifer_btn_locked",
+      "Main": [],
+      "Belt": [
+        {
+          "Shortname": "smg.thompson",
+          "Amount": 1,
+          "Skin": 0,
+          "Ammo": 0,
+          "Magazine": 0,
+          "Slot": 0,
+          "Container": "belt",
+          "Mods": []
+        }
+      ],
+      "Wear": [
+        {
+          "Shortname": "kriegbackpack",
+          "Amount": 1,
+          "Skin": 0,
+          "Ammo": 0,
+          "Magazine": 0,
+          "Slot": 7,
+          "Container": "wear",
+          "Mods": []
+        },
+        {
+          "Shortname": "shoes.boots",
+          "Amount": 1,
+          "Skin": 0,
+          "Ammo": 0,
+          "Magazine": 0,
+          "Slot": 0,
+          "Container": "wear",
+          "Mods": []
+        },
+        {
+          "Shortname": "tactical.gloves",
+          "Amount": 1,
+          "Skin": 0,
+          "Ammo": 0,
+          "Magazine": 0,
+          "Slot": 2,
+          "Container": "wear",
+          "Mods": []
+        },
+        {
+          "Shortname": "hoodie",
+          "Amount": 1,
+          "Skin": 0,
+          "Ammo": 0,
+          "Magazine": 0,
+          "Slot": 3,
+          "Container": "wear",
+          "Mods": []
+        },
+        {
+          "Shortname": "jacket",
+          "Amount": 1,
+          "Skin": 0,
+          "Ammo": 0,
+          "Magazine": 0,
+          "Slot": 4,
+          "Container": "wear",
+          "Mods": []
+        },
+        {
+          "Shortname": "pants",
+          "Amount": 1,
+          "Skin": 0,
+          "Ammo": 0,
+          "Magazine": 0,
+          "Slot": 5,
+          "Container": "wear",
+          "Mods": []
+        },
+        {
+          "Shortname": "mask.bandana",
+          "Amount": 1,
+          "Skin": 0,
+          "Ammo": 0,
+          "Magazine": 0,
+          "Slot": 1,
+          "Container": "wear",
+          "Mods": []
+        },
+        {
+          "Shortname": "riot.helmet",
+          "Amount": 1,
+          "Skin": 0,
+          "Ammo": 0,
+          "Magazine": 0,
+          "Slot": 6,
+          "Container": "wear",
+          "Mods": []
+        }
+      ]
+    },
+    {
+      "CardArtKey": null,
+      "CloseRect": [
+        0.96,
+        0.94,
+        0.995,
+        0.99
+      ],
+      "EditRect": [
+        0.02,
+        0.01,
+        0.14,
+        0.06
+      ],
+      "Name": "",
+      "Permission": "",
+      "CooldownSeconds": 600,
+      "GiveMessage": "",
+      "CardArtUrl": "",
+      "ActionRect": [
+        0.06,
+        0.05,
+        0.94,
+        0.17
+      ],
+      "BtnPng_Take": "kitlucifer_btn_take",
+      "BtnPng_Cooldown": "kitlucifer_btn_cd",
+      "BtnPng_Locked": "kitlucifer_btn_locked",
+      "Main": [],
+      "Belt": [],
+      "Wear": []
+    },
+    {
+      "CardArtKey": null,
+      "CloseRect": [
+        0.96,
+        0.94,
+        0.995,
+        0.99
+      ],
+      "EditRect": [
+        0.02,
+        0.01,
+        0.14,
+        0.06
+      ],
+      "Name": "",
+      "Permission": "",
+      "CooldownSeconds": 600,
+      "GiveMessage": "",
+      "CardArtUrl": "",
+      "ActionRect": [
+        0.06,
+        0.05,
+        0.94,
+        0.17
+      ],
+      "BtnPng_Take": "kitlucifer_btn_take",
+      "BtnPng_Cooldown": "kitlucifer_btn_cd",
+      "BtnPng_Locked": "kitlucifer_btn_locked",
+      "Main": [],
+      "Belt": [],
+      "Wear": []
+    },
+    {
+      "CardArtKey": null,
+      "CloseRect": [
+        0.96,
+        0.94,
+        0.995,
+        0.99
+      ],
+      "EditRect": [
+        0.02,
+        0.01,
+        0.14,
+        0.06
+      ],
+      "Name": "",
+      "Permission": "",
+      "CooldownSeconds": 600,
+      "GiveMessage": "",
+      "CardArtUrl": "",
+      "ActionRect": [
+        0.06,
+        0.05,
+        0.94,
+        0.17
+      ],
+      "BtnPng_Take": "kitlucifer_btn_take",
+      "BtnPng_Cooldown": "kitlucifer_btn_cd",
+      "BtnPng_Locked": "kitlucifer_btn_locked",
+      "Main": [],
+      "Belt": [],
+      "Wear": []
+    },
+    {
+      "CardArtKey": null,
+      "CloseRect": [
+        0.96,
+        0.94,
+        0.995,
+        0.99
+      ],
+      "EditRect": [
+        0.02,
+        0.01,
+        0.14,
+        0.06
+      ],
+      "Name": "",
+      "Permission": "",
+      "CooldownSeconds": 600,
+      "GiveMessage": "",
+      "CardArtUrl": "",
+      "ActionRect": [
+        0.06,
+        0.05,
+        0.94,
+        0.17
+      ],
+      "BtnPng_Take": "kitlucifer_btn_take",
+      "BtnPng_Cooldown": "kitlucifer_btn_cd",
+      "BtnPng_Locked": "kitlucifer_btn_locked",
+      "Main": [],
+      "Belt": [],
+      "Wear": []
+    },
+    {
+      "CardArtKey": null,
+      "CloseRect": [
+        0.96,
+        0.94,
+        0.995,
+        0.99
+      ],
+      "EditRect": [
+        0.02,
+        0.01,
+        0.14,
+        0.06
+      ],
+      "Name": "",
+      "Permission": "",
+      "CooldownSeconds": 600,
+      "GiveMessage": "",
+      "CardArtUrl": "",
+      "ActionRect": [
+        0.06,
+        0.05,
+        0.94,
+        0.17
+      ],
+      "BtnPng_Take": "kitlucifer_btn_take",
+      "BtnPng_Cooldown": "kitlucifer_btn_cd",
+      "BtnPng_Locked": "kitlucifer_btn_locked",
+      "Main": [],
+      "Belt": [],
+      "Wear": []
+    }
+  ],
+  "DebugHighlight": false,
+  "MenuCells": [
+    [
+      0.126315773,
+      0.634285569,
+      0.364561379,
+      0.860000134
+    ],
+    [
+      0.3908772,
+      0.64428556,
+      0.6091229,
+      0.850000143
+    ],
+    [
+      0.6454386,
+      0.64428556,
+      0.873684347,
+      0.860000134
+    ],
+    [
+      0.106315777,
+      0.218571469,
+      0.3545614,
+      0.475714326
+    ],
+    [
+      0.3708772,
+      0.218571469,
+      0.629122853,
+      0.5257143
+    ],
+    [
+      0.6454386,
+      0.218571469,
+      0.8936843,
+      0.475714326
+    ]
+  ],
+  "MainMenuRect": [
+    1.49011612E-08,
+    0.0,
+    0.9999999,
+    0.9999999
+  ],
+  "MenuBackgroundKey": "menuback_ground",
+  "MenuBackgroundUrl": "https://s10.iimage.su/s/04/gCnynzPx7i6yleGkf0kM80njyLltNWm28UeGBGuzp.png",
+  "MenuCloseRect": [
+    0.95,
+    0.91,
+    1.0,
+    1.0
+  ]
+}

@@ -1,0 +1,14 @@
+{
+  "Enable Permission": true,
+  "Can Admins Ignore Permission Restriction": true,
+  "Automatic Code Setup": true,
+  "Automatic Code Lock Deploy": false,
+  "Share With Team": false,
+  "Share With Clan": false,
+  "Share With Friends": false,
+  "Command": [
+    "ql",
+    "quarrylock"
+  ],
+  "Chat Avatar": 0
+}

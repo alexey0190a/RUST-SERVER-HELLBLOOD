@@ -1,0 +1,26 @@
+{
+  "Allow NPCs to bypass locks": false,
+  "Allow deploying locks onto vehicles owned by other players": false,
+  "Allow deploying locks onto unowned vehicles": true,
+  "Require cupboard auth to deploy locks onto unowned vehicles": false,
+  "Auto claim unowned vehicles when deploying locks": false,
+  "Auto replace vehicle ownership when deploying locks": false,
+  "Allow pushing vehicles while locked out": true,
+  "Cooldown to auto craft locks (seconds)": 10.0,
+  "Modular car settings": {
+    "Allow editing while locked out": true
+  },
+  "Lock sharing settings": {
+    "Clan": false,
+    "Clan or ally": false,
+    "Friends": false,
+    "Team": false
+  },
+  "Auto unlock idle vehicles": {
+    "Enabled": false,
+    "Unlock after idle time (seconds)": 3600.0,
+    "Check interval seconds": 300.0,
+    "Exempt owned vehicles": true,
+    "Exempt vehicles near cupboards": true
+  }
+}

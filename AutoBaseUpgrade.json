@@ -1,0 +1,16 @@
+{
+  "Allow the repair of deployable objects?": true,
+  "Upgrade cooldown (seconds)": {
+    "autobaseupgrade.use": 1.55,
+    "autobaseupgrade.vip": 0.55
+  },
+  "Cost Modifier for repairs": {
+    "autobaseupgrade.use": 1.5,
+    "autobaseupgrade.vip": 1.0
+  },
+  "Run upgrade effect": true,
+  "AnchorMin": "0.56 0.8",
+  "AnchorMax": "0.7 0.665",
+  "OffsetMin": "293.746 57.215",
+  "OffsetMax": "406.44 77.785"
+}

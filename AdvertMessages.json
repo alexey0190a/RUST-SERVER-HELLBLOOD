@@ -1,0 +1,18 @@
+{
+  "Messages": [
+    "<color=#FF0000>[HELLBLOOD]</color>: Постарайся не сдохнуть хотя бы 15 минут!Это не сложно, если не стрелять\nс рогатки по медведям.",
+    "<color=#FF0000>[HELLBLOOD]</color>: Наша группа ВКонтакте  <color=#42aaff>https://vk.com/hellbloodrust</color>\nВ случаях нахождения багов/ошибок/недоработок\nПишите в ЛС группы.",
+    "<color=#FF0000>[HELLBLOOD]</color>: Мы стараемся что бы вам было интересно!",
+    "<color=#FF0000>[HELLBLOOD]</color>: Зовите друзей вместе играть веселее.",
+    "<color=#FF0000>[HELLBLOOD]</color>: Информация по ивентам/командам лежит в /info",
+    "<color=#FF0000>[HELLBLOOD]</color>: На HELLBLOOD доступен крафт переработчика /rec.\nЧто бы поднять его - ударь по нему киянкой!",
+    "<color=#FF0000>[HELLBLOOD]</color>: На HELLBLOOD присутствуют <color=#00FF00>CUSTOM RADTOWN</color> - отмечены значком магазина на карте в зеленом круге.",
+    "<color=#FF0000>[HELLBLOOD]</color>: Время от времени по карте проезжает <color=#FF0000>HELLTRAIN</color> с добычей.\nПерехвати его и забери соджержимое!",
+    "<color=#FF0000>[HELLBLOOD]</color>: Время от времени по карте передвигается <color=#FF0000>КОНВОЙ</color>.\nПерехвати его, устрани охрану и забери лут себе!",
+    "<color=#FF0000>[HELLBLOOD]</color>: На HELLBLOOD присутствуют рудные/топливные КАРЬЕРЫ!\nИх можно найти в ЭЛИТНЫХ ящиках на эвентах.\nТак же к ним предусмотрены замки! Что бы повесить замок на карьер/насос\nвозьми в руки код-лок и пропиши в чат /ql.",
+    "<color=#FF0000>[HELLBLOOD]</color>: Вы можете повесить код-лок на свой коптер/вертолет!"
+  ],
+  "Advert Interval (in Minutes)": 3.0,
+  "Broadcast to Console (true/false)": false,
+  "Choose Message at Random (true/false)": true
+}
