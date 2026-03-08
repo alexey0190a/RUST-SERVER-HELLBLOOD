@@ -323,19 +323,31 @@ namespace Oxide.Plugins
                     Align = TextAnchor.MiddleLeft,
                     Color = _config.UiColors.InfoTextColor
                 },
-                RectTransform = { AnchorMin = "0.015 0", AnchorMax = "0.22 1" }
+                RectTransform = { AnchorMin = "0.015 0.5", AnchorMax = "0.22 1" }
             }, UiMain);
 
             container.Add(new CuiLabel
             {
                 Text =
                 {
-                    Text = BuildTimeText(),
+                    Text = BuildMoscowTimeText(),
                     FontSize = _config.UiGeometry.TimeFontSize,
                     Align = TextAnchor.MiddleLeft,
                     Color = _config.UiColors.InfoTextColor
                 },
-                RectTransform = { AnchorMin = "0.225 0", AnchorMax = "0.40 1" }
+                RectTransform = { AnchorMin = "0.225 0.5", AnchorMax = "0.40 1" }
+            }, UiMain);
+
+            container.Add(new CuiLabel
+            {
+                Text =
+                {
+                    Text = BuildServerTimeText(),
+                    FontSize = _config.UiGeometry.TimeFontSize,
+                    Align = TextAnchor.MiddleLeft,
+                    Color = _config.UiColors.InfoTextColor
+                },
+                RectTransform = { AnchorMin = "0.015 0", AnchorMax = "0.40 0.5" }
             }, UiMain);
 
             AddEventIndicators(container);
@@ -374,7 +386,7 @@ namespace Oxide.Plugins
             var parent = container.Add(new CuiPanel
             {
                 Image = { Color = "0 0 0 0" },
-                RectTransform = { AnchorMin = "0.42 0.12", AnchorMax = "0.985 0.88" }
+                RectTransform = { AnchorMin = "0.42 0.08", AnchorMax = "0.985 0.46" }
             }, UiMain, UiMain + ".Events");
 
             for (var i = 0; i < count; i++)
@@ -440,18 +452,23 @@ namespace Oxide.Plugins
 
         private string BuildOnlineText()
         {
-            return "Online: " + BasePlayer.activePlayerList.Count;
+            return "Онлайн: " + BasePlayer.activePlayerList.Count;
         }
 
-        private string BuildTimeText()
+        private string BuildMoscowTimeText()
+        {
+            return "Москва: " + DateTime.UtcNow.AddHours(3).ToString("HH:mm");
+        }
+
+        private string BuildServerTimeText()
         {
             var cycle = TOD_Sky.Instance?.Cycle;
             if (cycle == null)
             {
-                return "Time: --:--";
+                return "Сервер: --:--";
             }
 
-            return "Time: " + cycle.DateTime.ToString("HH:mm");
+            return "Сервер: " + cycle.DateTime.ToString("HH:mm");
         }
 
         private void DestroyPlayerUi(BasePlayer player)
