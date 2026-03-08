@@ -559,12 +559,14 @@ private void ArmPmcHackExplosionFlow(HackableLockedCrate crate, BasePlayer trigg
         {
             var ct = crate.GetType();
 
-            var fp = ct.GetField("hackingPlayer", BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic);
+            var fp = ct.GetField("hackingPlayer", BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic)
+                     ?? ct.GetField("hackerPlayer", BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic);
             if (fp != null) triggerPlayer = fp.GetValue(crate) as BasePlayer;
 
             if (triggerPlayer == null)
             {
-                var pp = ct.GetProperty("hackingPlayer", BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic);
+                var pp = ct.GetProperty("hackingPlayer", BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic)
+                         ?? ct.GetProperty("hackerPlayer", BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic);
                 if (pp != null) triggerPlayer = pp.GetValue(crate, null) as BasePlayer;
             }
 
@@ -572,7 +574,9 @@ private void ArmPmcHackExplosionFlow(HackableLockedCrate crate, BasePlayer trigg
             {
                 ulong uid = 0UL;
 
-                var fu = ct.GetField("hackerUserID", BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic);
+                var fu = ct.GetField("hackerUserID", BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic)
+                         ?? ct.GetField("hackingPlayerId", BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic)
+                         ?? ct.GetField("hackerPlayerId", BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic);
                 if (fu != null)
                 {
                     var v = fu.GetValue(crate);
@@ -585,7 +589,9 @@ private void ArmPmcHackExplosionFlow(HackableLockedCrate crate, BasePlayer trigg
 
                 if (uid == 0UL)
                 {
-                    var pu = ct.GetProperty("hackerUserID", BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic);
+                    var pu = ct.GetProperty("hackerUserID", BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic)
+                             ?? ct.GetProperty("hackingPlayerId", BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic)
+                             ?? ct.GetProperty("hackerPlayerId", BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic);
                     if (pu != null)
                     {
                         var v = pu.GetValue(crate, null);
