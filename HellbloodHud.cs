@@ -6,13 +6,14 @@ using UnityEngine;
 
 namespace Oxide.Plugins
 {
-    [Info("HellbloodHud", "BLOODHELL", "1.2.0")]
-    [Description("HUD with info button, time panel and event indicators.")]
+    [Info("HellbloodHud", "BLOODHELL", "1.3.0")]
+    [Description("HUD with info button, time panel and fixed event tiles.")]
     public class HellbloodHud : RustPlugin
     {
         private const string UiMain = "HellbloodHud.UI.Main";
         private const string UiButton = "HellbloodHud.UI.Button";
         private const string UiEditor = "HellbloodHud.UI.Editor";
+        private const string UiEditorStatus = "HellbloodHud.UI.Editor.Status";
 
         private ConfigData _config;
         private readonly Dictionary<string, bool> _customEvents = new Dictionary<string, bool>(StringComparer.OrdinalIgnoreCase);
@@ -22,6 +23,7 @@ namespace Oxide.Plugins
         private bool _cargoShipActive;
         private bool _bradleyActive;
         private bool _chinookActive;
+        private bool _airdropActive;
 
         private Timer _refreshTimer;
 
@@ -43,6 +45,24 @@ namespace Oxide.Plugins
             public string InfoAnchorMax = "0.45 0.97";
             public string InfoOffsetMin = "0 0";
             public string InfoOffsetMax = "0 0";
+
+            public string EventTileHelltrainMin = "0.42 0.28";
+            public string EventTileHelltrainMax = "0.57 0.46";
+
+            public string EventTileConvoyMin = "0.59 0.28";
+            public string EventTileConvoyMax = "0.74 0.46";
+
+            public string EventTileCargoMin = "0.42 0.08";
+            public string EventTileCargoMax = "0.52 0.24";
+
+            public string EventTileAirdropMin = "0.54 0.08";
+            public string EventTileAirdropMax = "0.64 0.24";
+
+            public string EventTileChinookMin = "0.66 0.08";
+            public string EventTileChinookMax = "0.76 0.24";
+
+            public string EventTileHelitiersMin = "0.78 0.08";
+            public string EventTileHelitiersMax = "0.92 0.24";
         }
 
         private class UiGeometry
@@ -50,7 +70,6 @@ namespace Oxide.Plugins
             public int ButtonFontSize = 14;
             public int OnlineFontSize = 12;
             public int TimeFontSize = 12;
-            public float EventIndicatorSpacing = 0.01f;
             public float EditorStep = 0.002f;
         }
 
@@ -65,12 +84,6 @@ namespace Oxide.Plugins
             public string EventActiveColor = "0.2 0.7 0.2 1";
             public string EventInactiveColor = "0.35 0.35 0.35 1";
             public string EventTextColor = "1 1 1 1";
-        }
-
-        private class EventIndicator
-        {
-            public string Label;
-            public bool IsActive;
         }
 
         private class EditorState
@@ -206,6 +219,13 @@ namespace Oxide.Plugins
             {
                 _chinookActive = true;
                 RefreshHudForAllPlayers();
+                return;
+            }
+
+            if (entity is SupplyDrop)
+            {
+                _airdropActive = true;
+                RefreshHudForAllPlayers();
             }
         }
 
@@ -216,7 +236,7 @@ namespace Oxide.Plugins
                 return;
             }
 
-            if (entity is PatrolHelicopter || entity is CargoShip || entity is BradleyAPC || entity is CH47HelicopterAIController)
+            if (entity is PatrolHelicopter || entity is CargoShip || entity is BradleyAPC || entity is CH47HelicopterAIController || entity is SupplyDrop)
             {
                 RefreshVanillaEventsState();
                 RefreshHudForAllPlayers();
@@ -259,7 +279,8 @@ namespace Oxide.Plugins
             if (action == "open")
             {
                 state.IsOpen = true;
-                RefreshEditorOverlay(player);
+                CreateEditorOverlay(player);
+                UpdateEditorOverlayStatus(player, state);
                 return;
             }
 
@@ -277,8 +298,8 @@ namespace Oxide.Plugins
 
             if (action == "next")
             {
-                state.TargetIndex = (state.TargetIndex + 1) % 2;
-                RefreshEditorOverlay(player);
+                state.TargetIndex = (state.TargetIndex + 1) % 8;
+                UpdateEditorOverlayStatus(player, state);
                 return;
             }
 
@@ -287,9 +308,9 @@ namespace Oxide.Plugins
                 state.TargetIndex--;
                 if (state.TargetIndex < 0)
                 {
-                    state.TargetIndex = 1;
+                    state.TargetIndex = 7;
                 }
-                RefreshEditorOverlay(player);
+                UpdateEditorOverlayStatus(player, state);
                 return;
             }
 
@@ -302,7 +323,7 @@ namespace Oxide.Plugins
                 }
 
                 _config.UiGeometry.EditorStep = step;
-                RefreshEditorOverlay(player);
+                UpdateEditorOverlayStatus(player, state);
                 return;
             }
 
@@ -317,7 +338,7 @@ namespace Oxide.Plugins
 
                 ApplyNudge(state.TargetIndex, dx * _config.UiGeometry.EditorStep, dy * _config.UiGeometry.EditorStep);
                 RefreshHudPreview(player);
-                RefreshEditorOverlay(player);
+                UpdateEditorOverlayStatus(player, state);
                 return;
             }
 
@@ -332,7 +353,7 @@ namespace Oxide.Plugins
 
                 ApplyResize(state.TargetIndex, dx * _config.UiGeometry.EditorStep, dy * _config.UiGeometry.EditorStep);
                 RefreshHudPreview(player);
-                RefreshEditorOverlay(player);
+                UpdateEditorOverlayStatus(player, state);
                 return;
             }
 
@@ -345,24 +366,64 @@ namespace Oxide.Plugins
 
         private void ApplyNudge(int targetIndex, float x, float y)
         {
-            if (targetIndex == 0)
+            switch (targetIndex)
             {
-                ShiftAnchors(ref _config.UiPosition.ButtonAnchorMin, ref _config.UiPosition.ButtonAnchorMax, x, y);
-                return;
+                case 0:
+                    ShiftAnchors(ref _config.UiPosition.ButtonAnchorMin, ref _config.UiPosition.ButtonAnchorMax, x, y);
+                    return;
+                case 1:
+                    ShiftAnchors(ref _config.UiPosition.InfoAnchorMin, ref _config.UiPosition.InfoAnchorMax, x, y);
+                    return;
+                case 2:
+                    ShiftAnchors(ref _config.UiPosition.EventTileHelltrainMin, ref _config.UiPosition.EventTileHelltrainMax, x, y);
+                    return;
+                case 3:
+                    ShiftAnchors(ref _config.UiPosition.EventTileConvoyMin, ref _config.UiPosition.EventTileConvoyMax, x, y);
+                    return;
+                case 4:
+                    ShiftAnchors(ref _config.UiPosition.EventTileCargoMin, ref _config.UiPosition.EventTileCargoMax, x, y);
+                    return;
+                case 5:
+                    ShiftAnchors(ref _config.UiPosition.EventTileAirdropMin, ref _config.UiPosition.EventTileAirdropMax, x, y);
+                    return;
+                case 6:
+                    ShiftAnchors(ref _config.UiPosition.EventTileChinookMin, ref _config.UiPosition.EventTileChinookMax, x, y);
+                    return;
+                case 7:
+                    ShiftAnchors(ref _config.UiPosition.EventTileHelitiersMin, ref _config.UiPosition.EventTileHelitiersMax, x, y);
+                    return;
             }
-
-            ShiftAnchors(ref _config.UiPosition.InfoAnchorMin, ref _config.UiPosition.InfoAnchorMax, x, y);
         }
 
         private void ApplyResize(int targetIndex, float x, float y)
         {
-            if (targetIndex == 0)
+            switch (targetIndex)
             {
-                StretchAnchors(ref _config.UiPosition.ButtonAnchorMax, x, y);
-                return;
+                case 0:
+                    StretchAnchors(ref _config.UiPosition.ButtonAnchorMax, x, y);
+                    return;
+                case 1:
+                    StretchAnchors(ref _config.UiPosition.InfoAnchorMax, x, y);
+                    return;
+                case 2:
+                    StretchAnchors(ref _config.UiPosition.EventTileHelltrainMax, x, y);
+                    return;
+                case 3:
+                    StretchAnchors(ref _config.UiPosition.EventTileConvoyMax, x, y);
+                    return;
+                case 4:
+                    StretchAnchors(ref _config.UiPosition.EventTileCargoMax, x, y);
+                    return;
+                case 5:
+                    StretchAnchors(ref _config.UiPosition.EventTileAirdropMax, x, y);
+                    return;
+                case 6:
+                    StretchAnchors(ref _config.UiPosition.EventTileChinookMax, x, y);
+                    return;
+                case 7:
+                    StretchAnchors(ref _config.UiPosition.EventTileHelitiersMax, x, y);
+                    return;
             }
-
-            StretchAnchors(ref _config.UiPosition.InfoAnchorMax, x, y);
         }
 
         private void ShiftAnchors(ref string min, ref string max, float x, float y)
@@ -433,6 +494,7 @@ namespace Oxide.Plugins
             _cargoShipActive = false;
             _bradleyActive = false;
             _chinookActive = false;
+            _airdropActive = false;
 
             foreach (var entity in BaseNetworkable.serverEntities)
             {
@@ -457,10 +519,9 @@ namespace Oxide.Plugins
                 {
                     _chinookActive = true;
                 }
-
-                if (_patrolHelicopterActive && _cargoShipActive && _bradleyActive && _chinookActive)
+                else if (!_airdropActive && entity is SupplyDrop)
                 {
-                    break;
+                    _airdropActive = true;
                 }
             }
         }
@@ -574,104 +635,59 @@ namespace Oxide.Plugins
                 RectTransform = { AnchorMin = "0.015 0", AnchorMax = "0.40 0.5" }
             }, UiMain);
 
-            AddEventIndicators(container);
+            AddEventTiles(container);
 
             CuiHelper.AddUi(player, container);
         }
 
-        private void AddEventIndicators(CuiElementContainer container)
+        private void AddEventTiles(CuiElementContainer container)
         {
             if (container == null)
             {
                 return;
             }
 
-            var indicators = BuildEventIndicators();
-            if (indicators.Count == 0)
-            {
-                return;
-            }
-
-            var spacing = _config.UiGeometry.EventIndicatorSpacing;
-            if (spacing < 0f)
-            {
-                spacing = 0f;
-            }
-
-            var count = indicators.Count;
-            var totalSpacing = spacing * (count - 1);
-            var width = (1f - totalSpacing) / count;
-            if (width <= 0f)
-            {
-                width = 1f / count;
-                spacing = 0f;
-            }
-
-            var parent = container.Add(new CuiPanel
-            {
-                Image = { Color = "0 0 0 0" },
-                RectTransform = { AnchorMin = "0.42 0.08", AnchorMax = "0.985 0.46" }
-            }, UiMain, UiMain + ".Events");
-
-            for (var i = 0; i < count; i++)
-            {
-                var minX = i * (width + spacing);
-                var maxX = minX + width;
-
-                var indicator = indicators[i];
-                var indicatorPanel = container.Add(new CuiPanel
-                {
-                    Image = { Color = indicator.IsActive ? _config.UiColors.EventActiveColor : _config.UiColors.EventInactiveColor },
-                    RectTransform =
-                    {
-                        AnchorMin = $"{minX} 0",
-                        AnchorMax = $"{maxX} 1"
-                    }
-                }, parent, UiMain + ".Events.State." + i);
-
-                container.Add(new CuiLabel
-                {
-                    Text =
-                    {
-                        Text = indicator.Label,
-                        FontSize = 10,
-                        Align = TextAnchor.MiddleCenter,
-                        Color = _config.UiColors.EventTextColor
-                    },
-                    RectTransform =
-                    {
-                        AnchorMin = "0 0",
-                        AnchorMax = "1 1"
-                    }
-                }, indicatorPanel);
-            }
+            AddEventTile(container, "HELLTRAIN", IsCustomEventActive("HELLTRAIN"), _config.UiPosition.EventTileHelltrainMin, _config.UiPosition.EventTileHelltrainMax, "Helltrain");
+            AddEventTile(container, "CONVOY", IsCustomEventActive("CONVOY"), _config.UiPosition.EventTileConvoyMin, _config.UiPosition.EventTileConvoyMax, "Convoy");
+            AddEventTile(container, "CARGO", _cargoShipActive, _config.UiPosition.EventTileCargoMin, _config.UiPosition.EventTileCargoMax, "Cargo");
+            AddEventTile(container, "AIRDROP", _airdropActive, _config.UiPosition.EventTileAirdropMin, _config.UiPosition.EventTileAirdropMax, "Airdrop");
+            AddEventTile(container, "CHINOOK", _chinookActive, _config.UiPosition.EventTileChinookMin, _config.UiPosition.EventTileChinookMax, "Chinook");
+            AddEventTile(container, "HELITIERS", _patrolHelicopterActive, _config.UiPosition.EventTileHelitiersMin, _config.UiPosition.EventTileHelitiersMax, "Helitiers");
         }
 
-        private List<EventIndicator> BuildEventIndicators()
+        private void AddEventTile(CuiElementContainer container, string label, bool isActive, string anchorMin, string anchorMax, string elementKey)
         {
-            var indicators = new List<EventIndicator>
+            var panel = container.Add(new CuiPanel
             {
-                new EventIndicator { Label = "HELI", IsActive = _patrolHelicopterActive },
-                new EventIndicator { Label = "CARGO", IsActive = _cargoShipActive },
-                new EventIndicator { Label = "BRAD", IsActive = _bradleyActive },
-                new EventIndicator { Label = "CH47", IsActive = _chinookActive }
-            };
-
-            foreach (var pair in _customEvents)
-            {
-                if (string.IsNullOrWhiteSpace(pair.Key))
+                Image = { Color = isActive ? _config.UiColors.EventActiveColor : _config.UiColors.EventInactiveColor },
+                RectTransform =
                 {
-                    continue;
+                    AnchorMin = anchorMin,
+                    AnchorMax = anchorMax
                 }
+            }, UiMain, UiMain + ".Tile." + elementKey);
 
-                indicators.Add(new EventIndicator
+            container.Add(new CuiLabel
+            {
+                Text =
                 {
-                    Label = pair.Key,
-                    IsActive = pair.Value
-                });
-            }
+                    Text = label,
+                    FontSize = 10,
+                    Align = TextAnchor.MiddleCenter,
+                    Color = _config.UiColors.EventTextColor
+                },
+                RectTransform =
+                {
+                    AnchorMin = "0 0",
+                    AnchorMax = "1 1"
+                }
+            }, panel);
+        }
 
-            return indicators;
+        private bool IsCustomEventActive(string eventName)
+        {
+            bool active;
+            return _customEvents.TryGetValue(eventName, out active) && active;
         }
 
         private string BuildOnlineText()
@@ -695,25 +711,14 @@ namespace Oxide.Plugins
             return "Сервер: " + cycle.DateTime.ToString("HH:mm");
         }
 
-        private void RefreshEditorOverlay(BasePlayer player)
+        private void CreateEditorOverlay(BasePlayer player)
         {
-            if (player == null || !player.IsConnected)
+            if (player == null)
             {
-                return;
-            }
-
-            EditorState state;
-            if (!_editorStateByPlayer.TryGetValue(player.userID, out state) || !state.IsOpen)
-            {
-                DestroyEditorUi(player);
                 return;
             }
 
             DestroyEditorUi(player);
-
-            var targetName = state.TargetIndex == 0 ? "Кнопка" : "Панель";
-            var targetMin = state.TargetIndex == 0 ? _config.UiPosition.ButtonAnchorMin : _config.UiPosition.InfoAnchorMin;
-            var targetMax = state.TargetIndex == 0 ? _config.UiPosition.ButtonAnchorMax : _config.UiPosition.InfoAnchorMax;
 
             var container = new CuiElementContainer();
             var panel = container.Add(new CuiPanel
@@ -732,18 +737,6 @@ namespace Oxide.Plugins
                 }
             });
 
-            container.Add(new CuiLabel
-            {
-                Text =
-                {
-                    Text = $"HUD EDIT | Цель: {targetName} | Шаг: {_config.UiGeometry.EditorStep.ToString("0.###", CultureInfo.InvariantCulture)}\nMin: {targetMin} Max: {targetMax}",
-                    FontSize = 11,
-                    Align = TextAnchor.MiddleCenter,
-                    Color = "1 1 1 1"
-                },
-                RectTransform = { AnchorMin = "0.02 0.52", AnchorMax = "0.98 0.98" }
-            }, panel);
-
             AddEditorButton(container, panel, "<", "0.02 0.10", "0.10 0.48", "hellbloodhud.edit prev");
             AddEditorButton(container, panel, ">", "0.11 0.10", "0.19 0.48", "hellbloodhud.edit next");
             AddEditorButton(container, panel, "L", "0.22 0.10", "0.28 0.48", "hellbloodhud.edit nudge -1 0");
@@ -758,6 +751,83 @@ namespace Oxide.Plugins
             AddEditorButton(container, panel, "X", "0.93 0.10", "0.98 0.48", "hellbloodhud.edit close");
 
             CuiHelper.AddUi(player, container);
+        }
+
+        private void UpdateEditorOverlayStatus(BasePlayer player, EditorState state)
+        {
+            if (player == null || state == null || !state.IsOpen)
+            {
+                return;
+            }
+
+            CuiHelper.DestroyUi(player, UiEditorStatus);
+
+            var targetName = GetTargetName(state.TargetIndex);
+            var targetMin = GetTargetMin(state.TargetIndex);
+            var targetMax = GetTargetMax(state.TargetIndex);
+
+            var container = new CuiElementContainer();
+            container.Add(new CuiLabel
+            {
+                Text =
+                {
+                    Text = $"HUD EDIT | Цель: {targetName} | Шаг: {_config.UiGeometry.EditorStep.ToString("0.###", CultureInfo.InvariantCulture)}\nMin: {targetMin} Max: {targetMax}",
+                    FontSize = 11,
+                    Align = TextAnchor.MiddleCenter,
+                    Color = "1 1 1 1"
+                },
+                RectTransform = { AnchorMin = "0.02 0.52", AnchorMax = "0.98 0.98" }
+            }, UiEditor, UiEditorStatus);
+
+            CuiHelper.AddUi(player, container);
+        }
+
+        private string GetTargetName(int targetIndex)
+        {
+            switch (targetIndex)
+            {
+                case 0: return "Button";
+                case 1: return "InfoPanel";
+                case 2: return "HelltrainTile";
+                case 3: return "ConvoyTile";
+                case 4: return "CargoTile";
+                case 5: return "AirdropTile";
+                case 6: return "ChinookTile";
+                case 7: return "HelitiersTile";
+                default: return "Button";
+            }
+        }
+
+        private string GetTargetMin(int targetIndex)
+        {
+            switch (targetIndex)
+            {
+                case 0: return _config.UiPosition.ButtonAnchorMin;
+                case 1: return _config.UiPosition.InfoAnchorMin;
+                case 2: return _config.UiPosition.EventTileHelltrainMin;
+                case 3: return _config.UiPosition.EventTileConvoyMin;
+                case 4: return _config.UiPosition.EventTileCargoMin;
+                case 5: return _config.UiPosition.EventTileAirdropMin;
+                case 6: return _config.UiPosition.EventTileChinookMin;
+                case 7: return _config.UiPosition.EventTileHelitiersMin;
+                default: return _config.UiPosition.ButtonAnchorMin;
+            }
+        }
+
+        private string GetTargetMax(int targetIndex)
+        {
+            switch (targetIndex)
+            {
+                case 0: return _config.UiPosition.ButtonAnchorMax;
+                case 1: return _config.UiPosition.InfoAnchorMax;
+                case 2: return _config.UiPosition.EventTileHelltrainMax;
+                case 3: return _config.UiPosition.EventTileConvoyMax;
+                case 4: return _config.UiPosition.EventTileCargoMax;
+                case 5: return _config.UiPosition.EventTileAirdropMax;
+                case 6: return _config.UiPosition.EventTileChinookMax;
+                case 7: return _config.UiPosition.EventTileHelitiersMax;
+                default: return _config.UiPosition.ButtonAnchorMax;
+            }
         }
 
         private void AddEditorButton(CuiElementContainer container, string parent, string text, string min, string max, string command)
@@ -788,6 +858,7 @@ namespace Oxide.Plugins
                 return;
             }
 
+            CuiHelper.DestroyUi(player, UiEditorStatus);
             CuiHelper.DestroyUi(player, UiEditor);
         }
 
