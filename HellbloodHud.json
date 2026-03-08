@@ -1,29 +1,29 @@
 {
   "UiPosition": {
-    "ButtonAnchorMin": "0 0.916",
-    "ButtonAnchorMax": "0.022 0.942",
+    "ButtonAnchorMin": "-0.008 0.938",
+    "ButtonAnchorMax": "0.042 1.018",
     "ButtonOffsetMin": "0 0",
     "ButtonOffsetMax": "44 44",
-    "InfoAnchorMin": "0.056 0.916",
-    "InfoAnchorMax": "0.305 1",
+    "InfoAnchorMin": "0.035 0.887",
+    "InfoAnchorMax": "0.209 1.124",
     "InfoOffsetMin": "0 0",
     "InfoOffsetMax": "0 0",
-    "BackgroundAnchorMin": "0.065 0.93",
-    "BackgroundAnchorMax": "0.45 0.97",
-    "BackgroundOffsetMin": "0 0",
-    "BackgroundOffsetMax": "0 0",
-    "EventTileHelltrainMin": "0.51 0.503",
-    "EventTileHelltrainMax": "0.73 0.883",
-    "EventTileConvoyMin": "0.74 0.5",
-    "EventTileConvoyMax": "0.96 0.88",
-    "EventTileCargoMin": "0.51 0.08",
-    "EventTileCargoMax": "0.62 0.465",
-    "EventTileAirdropMin": "0.628 0.08",
-    "EventTileAirdropMax": "0.729 0.46",
-    "EventTileChinookMin": "0.74 0.08",
-    "EventTileChinookMax": "0.84 0.46",
-    "EventTileHelitiersMin": "0.85 0.08",
-    "EventTileHelitiersMax": "0.96 0.46"
+    "RingBackgroundAnchorMin": "-0.134 0.689",
+    "RingBackgroundAnchorMax": "0.06 1.228",
+    "RingBackgroundOffsetMin": "0 0",
+    "RingBackgroundOffsetMax": "0 0",
+    "EventTileHelltrainMin": "0.503 0.28",
+    "EventTileHelltrainMax": "0.632 0.442",
+    "EventTileConvoyMin": "0.649 0.28",
+    "EventTileConvoyMax": "0.796 0.445",
+    "EventTileCargoMin": "0.814 0.28",
+    "EventTileCargoMax": "0.944 0.443",
+    "EventTileAirdropMin": "0.34 0.28",
+    "EventTileAirdropMax": "0.487 0.443",
+    "EventTileChinookMin": "0.18 0.283",
+    "EventTileChinookMax": "0.327 0.443",
+    "EventTileHelitiersMin": "0.023 0.284",
+    "EventTileHelitiersMax": "0.165 0.441"
   },
   "UiGeometry": {
     "ButtonFontSize": 14,
@@ -41,7 +41,35 @@
     "EventTextColor": "1 1 1 1"
   },
   "UiImages": {
-    "MainBackgroundPng": "hellblood_hud_panel",
-    "MainBackgroundUrl": "https://s10.iimage.su/s/08/gmIUzs9xg0LiGufbgTPC0zu4VFXjmv8lYOTCegJ70.png"
+    "RingBackgroundPng": "hellblood_hud_ring",
+    "RingBackgroundUrl": "",
+    "InfoPanelPng": "hellblood_hud_panel",
+    "InfoPanelUrl": ""
+  },
+  "UiIcons": {
+    "Helltrain": {
+      "Active": "hellblood_hud_activetrain",
+      "Inactive": "hellblood_hud_inactivetrain"
+    },
+    "Convoy": {
+      "Active": "hellblood_hud_activeconvoy",
+      "Inactive": "hellblood_hud_inactiveconvoy"
+    },
+    "Cargo": {
+      "Active": "hellblood_hud_activecargo",
+      "Inactive": "hellblood_hud_inactivecargo"
+    },
+    "Airdrop": {
+      "Active": "hellblood_hud_activeairdrop",
+      "Inactive": "hellblood_hud_inactiveairdrop"
+    },
+    "Chinook": {
+      "Active": "hellblood_hud_activechinook",
+      "Inactive": "hellblood_hud_inactivechinook"
+    },
+    "Helitiers": {
+      "Active": "hellblood_hud_activeheli",
+      "Inactive": "hellblood_hud_inactiveheli"
+    }
   }
 }
