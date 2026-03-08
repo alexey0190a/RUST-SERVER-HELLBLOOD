@@ -553,6 +553,57 @@ private void ArmPmcHackExplosionFlow(HackableLockedCrate crate, BasePlayer trigg
     if (!IsPmcHackCrate(crate)) return;
     if (_explosionTimerArmedOnce) return;
 
+    if (triggerPlayer == null && crate != null)
+    {
+        try
+        {
+            var ct = crate.GetType();
+
+            var fp = ct.GetField("hackingPlayer", BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic);
+            if (fp != null) triggerPlayer = fp.GetValue(crate) as BasePlayer;
+
+            if (triggerPlayer == null)
+            {
+                var pp = ct.GetProperty("hackingPlayer", BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic);
+                if (pp != null) triggerPlayer = pp.GetValue(crate, null) as BasePlayer;
+            }
+
+            if (triggerPlayer == null)
+            {
+                ulong uid = 0UL;
+
+                var fu = ct.GetField("hackerUserID", BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic);
+                if (fu != null)
+                {
+                    var v = fu.GetValue(crate);
+                    if (v is ulong) uid = (ulong)v;
+                    else if (v is long) uid = (ulong)(long)v;
+                    else if (v is uint) uid = (uint)v;
+                    else if (v is int) uid = (ulong)(int)v;
+                    else if (v != null) ulong.TryParse(v.ToString(), out uid);
+                }
+
+                if (uid == 0UL)
+                {
+                    var pu = ct.GetProperty("hackerUserID", BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic);
+                    if (pu != null)
+                    {
+                        var v = pu.GetValue(crate, null);
+                        if (v is ulong) uid = (ulong)v;
+                        else if (v is long) uid = (ulong)(long)v;
+                        else if (v is uint) uid = (uint)v;
+                        else if (v is int) uid = (ulong)(int)v;
+                        else if (v != null) ulong.TryParse(v.ToString(), out uid);
+                    }
+                }
+
+                if (uid != 0UL)
+                    triggerPlayer = BasePlayer.FindByID(uid) ?? BasePlayer.FindSleeping(uid);
+            }
+        }
+        catch { }
+    }
+
     _explosionTimerArmedOnce = true;
 
     _pmcHackC4SpawnTimer = timer.Once(PMC_HACK_C4_SPAWN_DELAY_SECONDS, () =>
