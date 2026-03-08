@@ -467,6 +467,7 @@ private List<string> _activeHeavyAssignments = null;
 
 
 private readonly Dictionary<ulong, string> _crateTypeName = new Dictionary<ulong, string>(); // netId -> CrateTypeName
+private readonly Dictionary<ulong, ulong> _pmcHackCrateTriggerPlayer = new Dictionary<ulong, ulong>(); // crate netId -> player userId
 
 private const string PMC_HACK_CRATE_LOOT_KEY = "CratePMCHACKS_C";
 private const float PMC_HACK_CRATE_HACK_SECONDS = 300f;
@@ -546,6 +547,7 @@ private void CancelPmcHackExplosionTimers()
     }
 
     _explosionTimerArmedOnce = false;
+    _pmcHackCrateTriggerPlayer.Clear();
 }
 
 private void ArmPmcHackExplosionFlow(HackableLockedCrate crate, BasePlayer triggerPlayer)
@@ -553,18 +555,27 @@ private void ArmPmcHackExplosionFlow(HackableLockedCrate crate, BasePlayer trigg
     if (!IsPmcHackCrate(crate)) return;
     if (_explosionTimerArmedOnce) return;
 
+    if (triggerPlayer == null && crate != null && crate.net != null)
+    {
+        ulong rememberedUserId;
+        if (_pmcHackCrateTriggerPlayer.TryGetValue(crate.net.ID.Value, out rememberedUserId) && rememberedUserId != 0UL)
+            triggerPlayer = BasePlayer.FindByID(rememberedUserId) ?? BasePlayer.FindSleeping(rememberedUserId);
+    }
+
     if (triggerPlayer == null && crate != null)
     {
         try
         {
             var ct = crate.GetType();
 
-            var fp = ct.GetField("hackingPlayer", BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic);
+            var fp = ct.GetField("hackingPlayer", BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic)
+                     ?? ct.GetField("hackerPlayer", BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic);
             if (fp != null) triggerPlayer = fp.GetValue(crate) as BasePlayer;
 
             if (triggerPlayer == null)
             {
-                var pp = ct.GetProperty("hackingPlayer", BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic);
+                var pp = ct.GetProperty("hackingPlayer", BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic)
+                         ?? ct.GetProperty("hackerPlayer", BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic);
                 if (pp != null) triggerPlayer = pp.GetValue(crate, null) as BasePlayer;
             }
 
@@ -572,7 +583,9 @@ private void ArmPmcHackExplosionFlow(HackableLockedCrate crate, BasePlayer trigg
             {
                 ulong uid = 0UL;
 
-                var fu = ct.GetField("hackerUserID", BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic);
+                var fu = ct.GetField("hackerUserID", BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic)
+                         ?? ct.GetField("hackingPlayerId", BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic)
+                         ?? ct.GetField("hackerPlayerId", BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic);
                 if (fu != null)
                 {
                     var v = fu.GetValue(crate);
@@ -585,7 +598,9 @@ private void ArmPmcHackExplosionFlow(HackableLockedCrate crate, BasePlayer trigg
 
                 if (uid == 0UL)
                 {
-                    var pu = ct.GetProperty("hackerUserID", BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic);
+                    var pu = ct.GetProperty("hackerUserID", BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic)
+                             ?? ct.GetProperty("hackingPlayerId", BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic)
+                             ?? ct.GetProperty("hackerPlayerId", BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic);
                     if (pu != null)
                     {
                         var v = pu.GetValue(crate, null);
@@ -1874,8 +1889,19 @@ if (_spawnedCars != null && _spawnedCars.Count > 0)
     return null;
 }
 
+private object CanHackCrate(BasePlayer player, HackableLockedCrate crate)
+{
+    if (player != null && crate != null && crate.net != null && IsPmcHackCrate(crate))
+        _pmcHackCrateTriggerPlayer[crate.net.ID.Value] = player.userID;
+
+    return null;
+}
+
 private void OnCrateHack(HackableLockedCrate crate, BasePlayer player)
 {
+    if (player != null && crate != null && crate.net != null && IsPmcHackCrate(crate))
+        _pmcHackCrateTriggerPlayer[crate.net.ID.Value] = player.userID;
+
     EnsurePmcHackCrateTimer(crate, "start_hack");
     ArmPmcHackExplosionFlow(crate, player);
 
@@ -9501,4 +9527,5 @@ private void CmdFixLayouts(ConsoleSystem.Arg arg)
 }
 } // ← Закрывает класс Helltrain 
 }
+
 
