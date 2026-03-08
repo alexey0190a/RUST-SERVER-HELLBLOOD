@@ -312,7 +312,7 @@ namespace Oxide.Plugins
 
             if (action == "next")
             {
-                state.TargetIndex = (state.TargetIndex + 1) % 8;
+                state.TargetIndex = (state.TargetIndex + 1) % 9;
                 UpdateEditorOverlayStatus(player, state);
                 return;
             }
@@ -322,7 +322,7 @@ namespace Oxide.Plugins
                 state.TargetIndex--;
                 if (state.TargetIndex < 0)
                 {
-                    state.TargetIndex = 7;
+                    state.TargetIndex = 8;
                 }
                 UpdateEditorOverlayStatus(player, state);
                 return;
@@ -389,21 +389,24 @@ namespace Oxide.Plugins
                     ShiftAnchors(ref _config.UiPosition.InfoAnchorMin, ref _config.UiPosition.InfoAnchorMax, x, y);
                     return;
                 case 2:
-                    ShiftAnchors(ref _config.UiPosition.EventTileHelltrainMin, ref _config.UiPosition.EventTileHelltrainMax, x, y);
+                    ShiftAnchors(ref _config.UiPosition.BackgroundAnchorMin, ref _config.UiPosition.BackgroundAnchorMax, x, y);
                     return;
                 case 3:
-                    ShiftAnchors(ref _config.UiPosition.EventTileConvoyMin, ref _config.UiPosition.EventTileConvoyMax, x, y);
+                    ShiftAnchors(ref _config.UiPosition.EventTileHelltrainMin, ref _config.UiPosition.EventTileHelltrainMax, x, y);
                     return;
                 case 4:
-                    ShiftAnchors(ref _config.UiPosition.EventTileCargoMin, ref _config.UiPosition.EventTileCargoMax, x, y);
+                    ShiftAnchors(ref _config.UiPosition.EventTileConvoyMin, ref _config.UiPosition.EventTileConvoyMax, x, y);
                     return;
                 case 5:
-                    ShiftAnchors(ref _config.UiPosition.EventTileAirdropMin, ref _config.UiPosition.EventTileAirdropMax, x, y);
+                    ShiftAnchors(ref _config.UiPosition.EventTileCargoMin, ref _config.UiPosition.EventTileCargoMax, x, y);
                     return;
                 case 6:
-                    ShiftAnchors(ref _config.UiPosition.EventTileChinookMin, ref _config.UiPosition.EventTileChinookMax, x, y);
+                    ShiftAnchors(ref _config.UiPosition.EventTileAirdropMin, ref _config.UiPosition.EventTileAirdropMax, x, y);
                     return;
                 case 7:
+                    ShiftAnchors(ref _config.UiPosition.EventTileChinookMin, ref _config.UiPosition.EventTileChinookMax, x, y);
+                    return;
+                case 8:
                     ShiftAnchors(ref _config.UiPosition.EventTileHelitiersMin, ref _config.UiPosition.EventTileHelitiersMax, x, y);
                     return;
             }
@@ -420,21 +423,24 @@ namespace Oxide.Plugins
                     StretchAnchors(ref _config.UiPosition.InfoAnchorMax, x, y);
                     return;
                 case 2:
-                    StretchAnchors(ref _config.UiPosition.EventTileHelltrainMax, x, y);
+                    StretchAnchors(ref _config.UiPosition.BackgroundAnchorMax, x, y);
                     return;
                 case 3:
-                    StretchAnchors(ref _config.UiPosition.EventTileConvoyMax, x, y);
+                    StretchAnchors(ref _config.UiPosition.EventTileHelltrainMax, x, y);
                     return;
                 case 4:
-                    StretchAnchors(ref _config.UiPosition.EventTileCargoMax, x, y);
+                    StretchAnchors(ref _config.UiPosition.EventTileConvoyMax, x, y);
                     return;
                 case 5:
-                    StretchAnchors(ref _config.UiPosition.EventTileAirdropMax, x, y);
+                    StretchAnchors(ref _config.UiPosition.EventTileCargoMax, x, y);
                     return;
                 case 6:
-                    StretchAnchors(ref _config.UiPosition.EventTileChinookMax, x, y);
+                    StretchAnchors(ref _config.UiPosition.EventTileAirdropMax, x, y);
                     return;
                 case 7:
+                    StretchAnchors(ref _config.UiPosition.EventTileChinookMax, x, y);
+                    return;
+                case 8:
                     StretchAnchors(ref _config.UiPosition.EventTileHelitiersMax, x, y);
                     return;
             }
@@ -653,12 +659,12 @@ private string GetPng(string key)
             {
                 Button =
                 {
-                    Color = _config.UiColors.ButtonColor,
+                    Color = "1 1 1 0",
                     Command = "hellbloodhud.info"
                 },
                 Text =
                 {
-                    Text = "●",
+                    Text = "",
                     FontSize = _config.UiGeometry.ButtonFontSize,
                     Align = TextAnchor.MiddleCenter,
                     Color = _config.UiColors.ButtonTextColor
@@ -674,7 +680,7 @@ private string GetPng(string key)
 
             container.Add(new CuiPanel
             {
-                Image = { Color = _config.UiColors.InfoPanelColor },
+                Image = { Color = !string.IsNullOrWhiteSpace(GetPng(_config.UiImages.MainBackgroundPng)) || !string.IsNullOrWhiteSpace(_config.UiImages.MainBackgroundUrl) ? "0 0 0 0" : _config.UiColors.InfoPanelColor },
                 RectTransform =
                 {
                     AnchorMin = _config.UiPosition.InfoAnchorMin,
@@ -873,12 +879,13 @@ private string GetPng(string key)
             {
                 case 0: return "Button";
                 case 1: return "InfoPanel";
-                case 2: return "HelltrainTile";
-                case 3: return "ConvoyTile";
-                case 4: return "CargoTile";
-                case 5: return "AirdropTile";
-                case 6: return "ChinookTile";
-                case 7: return "HelitiersTile";
+                case 2: return "Background";
+                case 3: return "HelltrainTile";
+                case 4: return "ConvoyTile";
+                case 5: return "CargoTile";
+                case 6: return "AirdropTile";
+                case 7: return "ChinookTile";
+                case 8: return "HelitiersTile";
                 default: return "Button";
             }
         }
@@ -889,12 +896,13 @@ private string GetPng(string key)
             {
                 case 0: return _config.UiPosition.ButtonAnchorMin;
                 case 1: return _config.UiPosition.InfoAnchorMin;
-                case 2: return _config.UiPosition.EventTileHelltrainMin;
-                case 3: return _config.UiPosition.EventTileConvoyMin;
-                case 4: return _config.UiPosition.EventTileCargoMin;
-                case 5: return _config.UiPosition.EventTileAirdropMin;
-                case 6: return _config.UiPosition.EventTileChinookMin;
-                case 7: return _config.UiPosition.EventTileHelitiersMin;
+                case 2: return _config.UiPosition.BackgroundAnchorMin;
+                case 3: return _config.UiPosition.EventTileHelltrainMin;
+                case 4: return _config.UiPosition.EventTileConvoyMin;
+                case 5: return _config.UiPosition.EventTileCargoMin;
+                case 6: return _config.UiPosition.EventTileAirdropMin;
+                case 7: return _config.UiPosition.EventTileChinookMin;
+                case 8: return _config.UiPosition.EventTileHelitiersMin;
                 default: return _config.UiPosition.ButtonAnchorMin;
             }
         }
@@ -905,12 +913,13 @@ private string GetPng(string key)
             {
                 case 0: return _config.UiPosition.ButtonAnchorMax;
                 case 1: return _config.UiPosition.InfoAnchorMax;
-                case 2: return _config.UiPosition.EventTileHelltrainMax;
-                case 3: return _config.UiPosition.EventTileConvoyMax;
-                case 4: return _config.UiPosition.EventTileCargoMax;
-                case 5: return _config.UiPosition.EventTileAirdropMax;
-                case 6: return _config.UiPosition.EventTileChinookMax;
-                case 7: return _config.UiPosition.EventTileHelitiersMax;
+                case 2: return _config.UiPosition.BackgroundAnchorMax;
+                case 3: return _config.UiPosition.EventTileHelltrainMax;
+                case 4: return _config.UiPosition.EventTileConvoyMax;
+                case 5: return _config.UiPosition.EventTileCargoMax;
+                case 6: return _config.UiPosition.EventTileAirdropMax;
+                case 7: return _config.UiPosition.EventTileChinookMax;
+                case 8: return _config.UiPosition.EventTileHelitiersMax;
                 default: return _config.UiPosition.ButtonAnchorMax;
             }
         }
@@ -971,3 +980,4 @@ private string GetPng(string key)
         }
     }
 }
+
