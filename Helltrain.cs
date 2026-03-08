@@ -548,7 +548,7 @@ private void CancelPmcHackExplosionTimers()
     _explosionTimerArmedOnce = false;
 }
 
-private void ArmPmcHackExplosionFlow(HackableLockedCrate crate)
+private void ArmPmcHackExplosionFlow(HackableLockedCrate crate, BasePlayer triggerPlayer)
 {
     if (!IsPmcHackCrate(crate)) return;
     if (_explosionTimerArmedOnce) return;
@@ -580,7 +580,8 @@ private void ArmPmcHackExplosionFlow(HackableLockedCrate crate)
         DestroyTrainAfterExplosion();
     });
 
-    Server.Broadcast("Helltrain заминирован! Взрыв через 10 минут!");
+    if (triggerPlayer != null)
+        triggerPlayer.ChatMessage("<color=#FF0000>[HELLBLOOD]</color> : <color=#FFFFFF>Контейнер поезда оказался под защитой, у вас ровно 10 минут прежде чем сработают мины!</color>");
 
     Puts($"[PMC HACK FLOW] armed: C4 in {PMC_HACK_C4_SPAWN_DELAY_SECONDS:F0}s, event end in {PMC_HACK_EVENT_END_DELAY_SECONDS:F0}s");
 }
@@ -1825,7 +1826,7 @@ if (_spawnedCars != null && _spawnedCars.Count > 0)
 private void OnCrateHack(HackableLockedCrate crate, BasePlayer player)
 {
     EnsurePmcHackCrateTimer(crate, "start_hack");
-    ArmPmcHackExplosionFlow(crate);
+    ArmPmcHackExplosionFlow(crate, player);
 
     if (_suppressHooks) return;
     if (!_alarmArmed) return;
@@ -2963,7 +2964,7 @@ SpawnExplosionFXAndDamage();
         : "Hell Train";
 		
 RestoreProtectionForAll();
-    Server.Broadcast(config.Messages.Exploded.Replace("{trainName}", trainName));
+    Server.Broadcast("<color=#FF0000>[HELLBLOOD]</color> : <color=#FFFFFF>Поезд ЧВК самоуничтожился!</color>");
     Puts("💥 Взрыв! Диспавн состава...");
 
     // Снести весь наш состав: все TrainCar, все крейты/NPC/турели/SAM и пр.
