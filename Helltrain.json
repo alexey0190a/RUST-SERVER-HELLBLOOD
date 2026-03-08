@@ -309,14 +309,14 @@
   "Количество C4 на вагон при взрыве": 5,
   "NPC_Types": {},
   "Сообщения": {
-    "Спавн поезда": "{trainName} выдвигается из квадрата {grid}!",
-    "Направление движения": "{trainName} выдвинулся из точки {fromGrid} → {toGrid}",
+    "Спавн поезда": "<color=#FF0000>[HELLBLOOD]</color> : {trainName}",
+    "Направление движения": "<color=#FF0000>[HELLBLOOD]</color> : {trainName}",
     "Взлом начат": "{trainName} на составе начали взлом сейфа, через {minutes} поезд будет самоуничтожен!",
     "Отсчёт взрыва (минуты)": "{trainName} взорвётся через {minutes} {minutesWord}!",
     "Отсчёт взрыва (секунды)": "{trainName} взорвётся через {seconds} секунд!",
     "Взрыв": "{trainName} ВЗОРВАН!",
     "Успешная разгрузка": "{trainName} выгрузился,а вы так и не напали.",
-    "Следующий поезд": "Следующий <color=#ff0000>HELLTRAIN</color> ожидается через {minutes} {minutesWord}, следите за новостями!"
+    "Следующий поезд": "<color=#FF0000>[HELLBLOOD]</color> : Следующий поезд ожидается через {minutes} {minutesWord}, следите за новостями!"
   },
   "ClearBlockingTrains": true,
   "ClearBlockingTrainsAheadMeters": 20.0,

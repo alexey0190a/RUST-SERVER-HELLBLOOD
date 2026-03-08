@@ -548,10 +548,61 @@ private void CancelPmcHackExplosionTimers()
     _explosionTimerArmedOnce = false;
 }
 
-private void ArmPmcHackExplosionFlow(HackableLockedCrate crate)
+private void ArmPmcHackExplosionFlow(HackableLockedCrate crate, BasePlayer triggerPlayer)
 {
     if (!IsPmcHackCrate(crate)) return;
     if (_explosionTimerArmedOnce) return;
+
+    if (triggerPlayer == null && crate != null)
+    {
+        try
+        {
+            var ct = crate.GetType();
+
+            var fp = ct.GetField("hackingPlayer", BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic);
+            if (fp != null) triggerPlayer = fp.GetValue(crate) as BasePlayer;
+
+            if (triggerPlayer == null)
+            {
+                var pp = ct.GetProperty("hackingPlayer", BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic);
+                if (pp != null) triggerPlayer = pp.GetValue(crate, null) as BasePlayer;
+            }
+
+            if (triggerPlayer == null)
+            {
+                ulong uid = 0UL;
+
+                var fu = ct.GetField("hackerUserID", BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic);
+                if (fu != null)
+                {
+                    var v = fu.GetValue(crate);
+                    if (v is ulong) uid = (ulong)v;
+                    else if (v is long) uid = (ulong)(long)v;
+                    else if (v is uint) uid = (uint)v;
+                    else if (v is int) uid = (ulong)(int)v;
+                    else if (v != null) ulong.TryParse(v.ToString(), out uid);
+                }
+
+                if (uid == 0UL)
+                {
+                    var pu = ct.GetProperty("hackerUserID", BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic);
+                    if (pu != null)
+                    {
+                        var v = pu.GetValue(crate, null);
+                        if (v is ulong) uid = (ulong)v;
+                        else if (v is long) uid = (ulong)(long)v;
+                        else if (v is uint) uid = (uint)v;
+                        else if (v is int) uid = (ulong)(int)v;
+                        else if (v != null) ulong.TryParse(v.ToString(), out uid);
+                    }
+                }
+
+                if (uid != 0UL)
+                    triggerPlayer = BasePlayer.FindByID(uid) ?? BasePlayer.FindSleeping(uid);
+            }
+        }
+        catch { }
+    }
 
     _explosionTimerArmedOnce = true;
 
@@ -562,17 +613,17 @@ private void ArmPmcHackExplosionFlow(HackableLockedCrate crate)
 
     _pmcHackAnnounce5MinTimer = timer.Once(5f * 60f, () =>
     {
-        Server.Broadcast("⚠️ Helltrain заминирован: до взрыва 5 минут!");
+        Server.Broadcast("Helltrain заминирован: до взрыва 5 минут!");
     });
 
     _pmcHackAnnounce2MinTimer = timer.Once(8f * 60f, () =>
     {
-        Server.Broadcast("⚠️ Helltrain заминирован: до взрыва 2 минуты!");
+        Server.Broadcast("Helltrain заминирован: до взрыва 2 минуты!");
     });
 
     _pmcHackAnnounce1MinTimer = timer.Once(9f * 60f, () =>
     {
-        Server.Broadcast("⚠️ Helltrain заминирован: до взрыва 1 минута!");
+        Server.Broadcast("Helltrain заминирован: до взрыва 1 минута!");
     });
 
     _pmcHackExplosionTimer = timer.Once(PMC_HACK_EVENT_END_DELAY_SECONDS, () =>
@@ -580,7 +631,8 @@ private void ArmPmcHackExplosionFlow(HackableLockedCrate crate)
         DestroyTrainAfterExplosion();
     });
 
-    Server.Broadcast("🚨 Helltrain заминирован! Взрыв через 10 минут!");
+    if (triggerPlayer != null)
+        triggerPlayer.ChatMessage("<color=#FF0000>[HELLBLOOD]</color> : <color=#FFFFFF>Контейнер поезда оказался под защитой, у вас ровно 10 минут прежде чем сработают мины!</color>");
 
     Puts($"[PMC HACK FLOW] armed: C4 in {PMC_HACK_C4_SPAWN_DELAY_SECONDS:F0}s, event end in {PMC_HACK_EVENT_END_DELAY_SECONDS:F0}s");
 }
@@ -1825,7 +1877,7 @@ if (_spawnedCars != null && _spawnedCars.Count > 0)
 private void OnCrateHack(HackableLockedCrate crate, BasePlayer player)
 {
     EnsurePmcHackCrateTimer(crate, "start_hack");
-    ArmPmcHackExplosionFlow(crate);
+    ArmPmcHackExplosionFlow(crate, player);
 
     if (_suppressHooks) return;
     if (!_alarmArmed) return;
@@ -2491,28 +2543,28 @@ public FixedScheduleSettings FixedSchedule { get; set; } = new FixedScheduleSett
     public class MessageSettings
     {
         [JsonProperty("Спавн поезда")]
-        public string TrainSpawned { get; set; } = "🚂 {trainName} появился в квадрате {grid}!";
+        public string TrainSpawned { get; set; } = "<color=#FF0000>[HELLBLOOD]</color> : {trainName}";
         
         [JsonProperty("Направление движения")]
-        public string TrainDirection { get; set; } = "🚂 {trainName} движется из {fromGrid} → {toGrid}";
+        public string TrainDirection { get; set; } = "<color=#FF0000>[HELLBLOOD]</color> : {trainName}";
         
         [JsonProperty("Взлом начат")]
-        public string HackStarted { get; set; } = "🔥 {trainName} ВЗЛОМАН! {minutes} МИНУТ ДО ВЗРЫВА!";
+        public string HackStarted { get; set; } = "{trainName} ВЗЛОМАН! {minutes} МИНУТ ДО ВЗРЫВА!";
         
         [JsonProperty("Отсчёт взрыва (минуты)")]
-        public string ExplosionMinutes { get; set; } = "⚠️ {trainName} взорвётся через {minutes} {minutesWord}!";
+        public string ExplosionMinutes { get; set; } = "{trainName} взорвётся через {minutes} {minutesWord}!";
         
         [JsonProperty("Отсчёт взрыва (секунды)")]
-        public string ExplosionSeconds { get; set; } = "💥 {trainName} взорвётся через {seconds} секунд!";
+        public string ExplosionSeconds { get; set; } = "{trainName} взорвётся через {seconds} секунд!";
         
         [JsonProperty("Взрыв")]
-        public string Exploded { get; set; } = "💥 {trainName} ВЗОРВАН!";
+        public string Exploded { get; set; } = "{trainName} ВЗОРВАН!";
         
         [JsonProperty("Успешная разгрузка")]
         public string SuccessfulDelivery { get; set; } = "✅ {trainName} успешно разгрузился";
         
                 [JsonProperty("Следующий поезд")]
-        public string NextTrain { get; set; } = "Следующий <color=#ff0000>HELLTRAIN</color> ожидается через {minutes}. Следите за новостями. {minutesWord}";
+        public string NextTrain { get; set; } = "<color=#FF0000>[HELLBLOOD]</color> : Следующий поезд ожидается через {minutes} {minutesWord}, следите за новостями!";
     }
 
 // STABILITY: cowcatcher ...
@@ -2649,6 +2701,9 @@ private void StartEventLifetimeTimer()
                 {
                     _pendingFixedScheduleCleanupUtc = null;
                     ForceDestroyHellTrain();
+                    CancelRespawnTimerOnly();
+                    _nextRespawnUtc = null;
+                    SaveRespawnState();
                     StartRespawnTimer();
                 });
 
@@ -2658,6 +2713,9 @@ private void StartEventLifetimeTimer()
 
             _pendingFixedScheduleCleanupUtc = null;
             ForceDestroyHellTrain();
+            CancelRespawnTimerOnly();
+            _nextRespawnUtc = null;
+            SaveRespawnState();
             StartRespawnTimer();
         });
 
@@ -2670,6 +2728,9 @@ private void StartEventLifetimeTimer()
     {
         // Никто не лутал — считаем «успешная доставка», сносим состав и готовим респавн
         ForceDestroyHellTrain();
+        CancelRespawnTimerOnly();
+        _nextRespawnUtc = null;
+        SaveRespawnState();
         StartRespawnTimer();
     });
 
@@ -2717,7 +2778,7 @@ private void CancelEventLifetimeTimers()
         );
     }
 
-    Server.Broadcast("⚠️ Поезд дрожит... взрыв близко!");
+    Server.Broadcast("Поезд дрожит... взрыв близко!");
 }
 
 // Периодическая проверка состояния состава/сетки (безопасная заглушка)
@@ -2954,7 +3015,7 @@ SpawnExplosionFXAndDamage();
         : "Hell Train";
 		
 RestoreProtectionForAll();
-    Server.Broadcast(config.Messages.Exploded.Replace("{trainName}", trainName));
+    Server.Broadcast("<color=#FF0000>[HELLBLOOD]</color> : <color=#FFFFFF>Поезд ЧВК самоуничтожился!</color>");
     Puts("💥 Взрыв! Диспавн состава...");
 
     // Снести весь наш состав: все TrainCar, все крейты/NPC/турели/SAM и пр.
@@ -2986,7 +3047,12 @@ RestoreProtectionForAll();
     }
 
     if (config.AutoRespawn && !_suppressAutoRespawn)
+    {
+    CancelRespawnTimerOnly();
+    _nextRespawnUtc = null;
+    SaveRespawnState();
     StartRespawnTimer();
+    }
 }
 
 
@@ -4378,10 +4444,24 @@ _trainLifecycle = new TrainLifecycle(
 string trainName = config.CompositionNames[_trainLifecycle.CompositionType];
 _trainLifecycle.LastGrid = GetGridPosition(trainEngine.transform.position);
 
-// ✅ ИЗМЕНЕНО: АНОНС СПАВНА ИЗ КОНФИГА
-string spawnMessage = config.Messages.TrainSpawned
-    .Replace("{trainName}", trainName)
-    .Replace("{grid}", _trainLifecycle.LastGrid);
+string spawnMessage;
+switch ((_trainLifecycle.CompositionType ?? string.Empty).ToLowerInvariant())
+{
+    case "bandit":
+        spawnMessage = $"<color=#FF0000>[HELLBLOOD]</color> : Банда рейдеров захватила поезд и мчится по рельсам, охраняя награбленный груз {_trainLifecycle.LastGrid}.";
+        break;
+    case "coblab":
+        spawnMessage = $"<color=#FF0000>[HELLBLOOD]</color> : Учёные Cobalt отправили поезд с ценным грузом по железной дороге {_trainLifecycle.LastGrid}.";
+        break;
+    case "pmc":
+        spawnMessage = $"<color=#FF0000>[HELLBLOOD]</color> : Подразделение ЧВК сопровождает бронированный состав с тяжёлой техникой {_trainLifecycle.LastGrid}.";
+        break;
+    default:
+        spawnMessage = config.Messages.TrainSpawned
+            .Replace("{trainName}", trainName)
+            .Replace("{grid}", _trainLifecycle.LastGrid);
+        break;
+}
 
 Server.Broadcast(spawnMessage);
 
