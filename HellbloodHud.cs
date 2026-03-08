@@ -893,7 +893,7 @@ CuiHelper.AddUi(player, container);
 
     AddEventTile(
         container,
-        _patrolHelicopterActive,
+        IsCustomEventActive("HELITIERS"),
         _config.UiPosition.EventTileHelitiersMin,
         _config.UiPosition.EventTileHelitiersMax,
         _config.UiIcons.Helitiers.Active,
