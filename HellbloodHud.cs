@@ -5,15 +5,14 @@ using UnityEngine;
 
 namespace Oxide.Plugins
 {
-    [Info("HellbloodHud", "BLOODHELL", "1.0.1")]
-    [Description("Simple HUD button with dropdown actions and active events line.")]
+    [Info("HellbloodHud", "BLOODHELL", "1.1.0")]
+    [Description("HUD with one info button, online/time line and event indicators.")]
     public class HellbloodHud : RustPlugin
     {
         private const string UiMain = "HellbloodHud.UI.Main";
-        private const string UiDropdown = "HellbloodHud.UI.Dropdown";
+        private const string UiButton = "HellbloodHud.UI.Button";
 
         private ConfigData _config;
-        private readonly Dictionary<ulong, bool> _dropdownState = new Dictionary<ulong, bool>();
         private readonly Dictionary<string, bool> _customEvents = new Dictionary<string, bool>(StringComparer.OrdinalIgnoreCase);
 
         private bool _patrolHelicopterActive;
@@ -21,67 +20,53 @@ namespace Oxide.Plugins
         private bool _bradleyActive;
         private bool _chinookActive;
 
+        private Timer _refreshTimer;
+
         private class ConfigData
         {
-            public string MainButtonText = "МЕНЮ";
-            public bool UseImageMainButton = false;
-            public string NoActiveEventsText = "Активные ивенты: нет";
             public UiPosition UiPosition = new UiPosition();
             public UiGeometry UiGeometry = new UiGeometry();
             public UiColors UiColors = new UiColors();
-            public List<DropdownButtonConfig> DropdownButtons = new List<DropdownButtonConfig>
-            {
-                new DropdownButtonConfig { Text = "Киты", Command = "kit", CommandType = "console" },
-                new DropdownButtonConfig { Text = "Телепорт", Command = "tpr", CommandType = "console" },
-                new DropdownButtonConfig { Text = "Магазин", Command = "shop", CommandType = "console" },
-                new DropdownButtonConfig { Text = "Кланы", Command = "clan", CommandType = "console" },
-                new DropdownButtonConfig { Text = "Инфо", Command = "info", CommandType = "console" }
-            };
         }
 
         private class UiPosition
         {
-            public string MainAnchorMin = "0.02 0.93";
-            public string MainAnchorMax = "0.18 0.97";
-            public string MainOffsetMin = "0 0";
-            public string MainOffsetMax = "0 0";
+            public string ButtonAnchorMin = "0.02 0.93";
+            public string ButtonAnchorMax = "0.02 0.93";
+            public string ButtonOffsetMin = "0 0";
+            public string ButtonOffsetMax = "44 44";
 
-            public string EventsAnchorMin = "0.02 0.97";
-            public string EventsAnchorMax = "0.35 0.995";
-            public string EventsOffsetMin = "0 0";
-            public string EventsOffsetMax = "0 0";
-
-            public string DropdownAnchorMin = "0.02 0.73";
-            public string DropdownAnchorMax = "0.18 0.93";
-            public string DropdownOffsetMin = "0 0";
-            public string DropdownOffsetMax = "0 0";
+            public string InfoAnchorMin = "0.065 0.93";
+            public string InfoAnchorMax = "0.45 0.97";
+            public string InfoOffsetMin = "0 0";
+            public string InfoOffsetMax = "0 0";
         }
 
         private class UiGeometry
         {
-            public int MainButtonFontSize = 14;
-            public int EventsFontSize = 12;
-            public int DropdownButtonFontSize = 12;
-            public float DropdownButtonSpacing = 0.005f;
+            public int ButtonFontSize = 14;
+            public int OnlineFontSize = 12;
+            public int TimeFontSize = 12;
+            public float EventIndicatorSpacing = 0.01f;
         }
 
         private class UiColors
         {
-            public string MainButtonColor = "0.13 0.13 0.13 0.95";
-            public string MainButtonTextColor = "1 1 1 1";
+            public string ButtonColor = "0.14 0.14 0.14 0.95";
+            public string ButtonTextColor = "1 1 1 1";
 
-            public string DropdownButtonColor = "0.18 0.18 0.18 0.95";
-            public string DropdownButtonTextColor = "1 1 1 1";
+            public string InfoPanelColor = "0.08 0.08 0.08 0.9";
+            public string InfoTextColor = "1 1 1 1";
 
-            public string EventsPanelColor = "0.08 0.08 0.08 0.9";
-            public string EventsTextColor = "1 1 1 1";
+            public string EventActiveColor = "0.2 0.7 0.2 1";
+            public string EventInactiveColor = "0.35 0.35 0.35 1";
+            public string EventTextColor = "1 1 1 1";
         }
 
-        private class DropdownButtonConfig
+        private class EventIndicator
         {
-            public string Text;
-            public string Command;
-            public string CommandType;
+            public string Label;
+            public bool IsActive;
         }
 
         protected override void LoadDefaultConfig()
@@ -122,11 +107,6 @@ namespace Oxide.Plugins
                 _config.UiColors = new UiColors();
             }
 
-            if (_config.DropdownButtons == null)
-            {
-                _config.DropdownButtons = new List<DropdownButtonConfig>();
-            }
-
             SaveConfig();
         }
 
@@ -134,24 +114,28 @@ namespace Oxide.Plugins
 
         private void Init()
         {
-            cmd.AddConsoleCommand("hellbloodhud.toggle", this, nameof(CmdToggle));
-            cmd.AddConsoleCommand("hellbloodhud.action", this, nameof(CmdAction));
+            cmd.AddConsoleCommand("hellbloodhud.info", this, nameof(CmdInfo));
         }
 
         private void OnServerInitialized()
         {
             RefreshVanillaEventsState();
             ShowHudForAllPlayers();
+
+            _refreshTimer?.Destroy();
+            _refreshTimer = timer.Every(5f, RefreshHudForAllPlayers);
         }
 
         private void Unload()
         {
+            _refreshTimer?.Destroy();
+            _refreshTimer = null;
+
             foreach (var player in BasePlayer.activePlayerList)
             {
                 DestroyPlayerUi(player);
             }
 
-            _dropdownState.Clear();
             _customEvents.Clear();
         }
 
@@ -167,7 +151,6 @@ namespace Oxide.Plugins
                 return;
             }
 
-            _dropdownState.Remove(player.userID);
             DestroyPlayerUi(player);
         }
 
@@ -220,7 +203,7 @@ namespace Oxide.Plugins
             }
         }
 
-        private void CmdToggle(ConsoleSystem.Arg arg)
+        private void CmdInfo(ConsoleSystem.Arg arg)
         {
             var player = arg?.Player();
             if (player == null)
@@ -228,64 +211,7 @@ namespace Oxide.Plugins
                 return;
             }
 
-            var current = false;
-            _dropdownState.TryGetValue(player.userID, out current);
-            _dropdownState[player.userID] = !current;
-            ShowPlayerUi(player);
-        }
-
-        private void CmdAction(ConsoleSystem.Arg arg)
-        {
-            var player = arg?.Player();
-            if (player == null)
-            {
-                return;
-            }
-
-            if (arg.Args == null || arg.Args.Length == 0)
-            {
-                return;
-            }
-
-            int index;
-            if (!int.TryParse(arg.Args[0], out index))
-            {
-                return;
-            }
-
-            if (index < 0 || index >= _config.DropdownButtons.Count)
-            {
-                return;
-            }
-
-            var button = _config.DropdownButtons[index];
-            if (button == null || string.IsNullOrWhiteSpace(button.Command))
-            {
-                return;
-            }
-
-            ExecutePlayerCommand(player, button.Command.Trim(), button.CommandType);
-        }
-
-        private void ExecutePlayerCommand(BasePlayer player, string command, string commandType)
-        {
-            if (player == null || string.IsNullOrWhiteSpace(command))
-            {
-                return;
-            }
-
-            if (string.Equals(commandType, "chat", StringComparison.OrdinalIgnoreCase))
-            {
-                if (!command.StartsWith("/"))
-                {
-                    command = "/" + command;
-                }
-
-                player.SendConsoleCommand("chat.say", command);
-                return;
-            }
-
-            player.SendConsoleCommand(command);
+            player.SendConsoleCommand("chat.say", "/info");
         }
 
         private void RefreshVanillaEventsState()
@@ -353,15 +279,38 @@ namespace Oxide.Plugins
 
             var container = new CuiElementContainer();
 
-            container.Add(new CuiPanel
+            container.Add(new CuiButton
             {
-                Image = { Color = _config.UiColors.EventsPanelColor },
+                Button =
+                {
+                    Color = _config.UiColors.ButtonColor,
+                    Command = "hellbloodhud.info"
+                },
+                Text =
+                {
+                    Text = "●",
+                    FontSize = _config.UiGeometry.ButtonFontSize,
+                    Align = TextAnchor.MiddleCenter,
+                    Color = _config.UiColors.ButtonTextColor
+                },
                 RectTransform =
                 {
-                    AnchorMin = _config.UiPosition.EventsAnchorMin,
-                    AnchorMax = _config.UiPosition.EventsAnchorMax,
-                    OffsetMin = _config.UiPosition.EventsOffsetMin,
-                    OffsetMax = _config.UiPosition.EventsOffsetMax
+                    AnchorMin = _config.UiPosition.ButtonAnchorMin,
+                    AnchorMax = _config.UiPosition.ButtonAnchorMax,
+                    OffsetMin = _config.UiPosition.ButtonOffsetMin,
+                    OffsetMax = _config.UiPosition.ButtonOffsetMax
+                }
+            }, "Hud", UiButton);
+
+            container.Add(new CuiPanel
+            {
+                Image = { Color = _config.UiColors.InfoPanelColor },
+                RectTransform =
+                {
+                    AnchorMin = _config.UiPosition.InfoAnchorMin,
+                    AnchorMax = _config.UiPosition.InfoAnchorMax,
+                    OffsetMin = _config.UiPosition.InfoOffsetMin,
+                    OffsetMax = _config.UiPosition.InfoOffsetMax
                 }
             }, "Hud", UiMain);
 
@@ -369,129 +318,140 @@ namespace Oxide.Plugins
             {
                 Text =
                 {
-                    Text = BuildEventsText(),
-                    FontSize = _config.UiGeometry.EventsFontSize,
+                    Text = BuildOnlineText(),
+                    FontSize = _config.UiGeometry.OnlineFontSize,
                     Align = TextAnchor.MiddleLeft,
-                    Color = _config.UiColors.EventsTextColor
+                    Color = _config.UiColors.InfoTextColor
                 },
-                RectTransform = { AnchorMin = "0.02 0", AnchorMax = "0.98 1" }
+                RectTransform = { AnchorMin = "0.015 0", AnchorMax = "0.22 1" }
             }, UiMain);
 
-            container.Add(new CuiButton
+            container.Add(new CuiLabel
             {
-                Button =
-                {
-                    Color = _config.UiColors.MainButtonColor,
-                    Command = "hellbloodhud.toggle"
-                },
                 Text =
                 {
-                    Text = _config.MainButtonText,
-                    FontSize = _config.UiGeometry.MainButtonFontSize,
-                    Align = TextAnchor.MiddleCenter,
-                    Color = _config.UiColors.MainButtonTextColor
+                    Text = BuildTimeText(),
+                    FontSize = _config.UiGeometry.TimeFontSize,
+                    Align = TextAnchor.MiddleLeft,
+                    Color = _config.UiColors.InfoTextColor
                 },
-                RectTransform =
-                {
-                    AnchorMin = _config.UiPosition.MainAnchorMin,
-                    AnchorMax = _config.UiPosition.MainAnchorMax,
-                    OffsetMin = _config.UiPosition.MainOffsetMin,
-                    OffsetMax = _config.UiPosition.MainOffsetMax
-                }
-            }, "Hud", UiMain + ".MainButton");
+                RectTransform = { AnchorMin = "0.225 0", AnchorMax = "0.40 1" }
+            }, UiMain);
+
+            AddEventIndicators(container);
 
             CuiHelper.AddUi(player, container);
-
-            var opened = false;
-            _dropdownState.TryGetValue(player.userID, out opened);
-            if (opened)
-            {
-                ShowDropdown(player);
-            }
         }
 
-        private void ShowDropdown(BasePlayer player)
+        private void AddEventIndicators(CuiElementContainer container)
         {
-            if (player == null)
+            if (container == null)
             {
                 return;
             }
 
-            CuiHelper.DestroyUi(player, UiDropdown);
-
-            var buttons = _config.DropdownButtons;
-            if (buttons == null || buttons.Count == 0)
+            var indicators = BuildEventIndicators();
+            if (indicators.Count == 0)
             {
                 return;
             }
 
-            var container = new CuiElementContainer();
-
-            container.Add(new CuiPanel
-            {
-                Image = { Color = "0 0 0 0" },
-                RectTransform =
-                {
-                    AnchorMin = _config.UiPosition.DropdownAnchorMin,
-                    AnchorMax = _config.UiPosition.DropdownAnchorMax,
-                    OffsetMin = _config.UiPosition.DropdownOffsetMin,
-                    OffsetMax = _config.UiPosition.DropdownOffsetMax
-                }
-            }, "Hud", UiDropdown);
-
-            var count = buttons.Count;
-            var spacing = _config.UiGeometry.DropdownButtonSpacing;
+            var spacing = _config.UiGeometry.EventIndicatorSpacing;
             if (spacing < 0f)
             {
                 spacing = 0f;
             }
 
+            var count = indicators.Count;
             var totalSpacing = spacing * (count - 1);
-            var buttonHeight = (1f - totalSpacing) / count;
-            if (buttonHeight <= 0f)
+            var width = (1f - totalSpacing) / count;
+            if (width <= 0f)
             {
-                buttonHeight = 1f / count;
+                width = 1f / count;
                 spacing = 0f;
             }
 
+            var parent = container.Add(new CuiPanel
+            {
+                Image = { Color = "0 0 0 0" },
+                RectTransform = { AnchorMin = "0.42 0.12", AnchorMax = "0.985 0.88" }
+            }, UiMain, UiMain + ".Events");
+
             for (var i = 0; i < count; i++)
             {
-                var btn = buttons[i];
-                if (btn == null)
+                var minX = i * (width + spacing);
+                var maxX = minX + width;
+
+                var indicator = indicators[i];
+                var indicatorPanel = container.Add(new CuiPanel
+                {
+                    Image = { Color = indicator.IsActive ? _config.UiColors.EventActiveColor : _config.UiColors.EventInactiveColor },
+                    RectTransform =
+                    {
+                        AnchorMin = $"{minX} 0",
+                        AnchorMax = $"{maxX} 1"
+                    }
+                }, parent, UiMain + ".Events.State." + i);
+
+                container.Add(new CuiLabel
+                {
+                    Text =
+                    {
+                        Text = indicator.Label,
+                        FontSize = 10,
+                        Align = TextAnchor.MiddleCenter,
+                        Color = _config.UiColors.EventTextColor
+                    },
+                    RectTransform =
+                    {
+                        AnchorMin = "0 0",
+                        AnchorMax = "1 1"
+                    }
+                }, indicatorPanel);
+            }
+        }
+
+        private List<EventIndicator> BuildEventIndicators()
+        {
+            var indicators = new List<EventIndicator>
+            {
+                new EventIndicator { Label = "HELI", IsActive = _patrolHelicopterActive },
+                new EventIndicator { Label = "CARGO", IsActive = _cargoShipActive },
+                new EventIndicator { Label = "BRAD", IsActive = _bradleyActive },
+                new EventIndicator { Label = "CH47", IsActive = _chinookActive }
+            };
+
+            foreach (var pair in _customEvents)
+            {
+                if (string.IsNullOrWhiteSpace(pair.Key))
                 {
                     continue;
                 }
 
-                var maxY = 1f - (i * (buttonHeight + spacing));
-                var minY = maxY - buttonHeight;
-                if (minY < 0f)
+                indicators.Add(new EventIndicator
                 {
-                    minY = 0f;
-                }
-
-                container.Add(new CuiButton
-                {
-                    Button =
-                    {
-                        Color = _config.UiColors.DropdownButtonColor,
-                        Command = $"hellbloodhud.action {i}"
-                    },
-                    Text =
-                    {
-                        Text = btn.Text ?? string.Empty,
-                        FontSize = _config.UiGeometry.DropdownButtonFontSize,
-                        Align = TextAnchor.MiddleCenter,
-                        Color = _config.UiColors.DropdownButtonTextColor
-                    },
-                    RectTransform =
-                    {
-                        AnchorMin = $"0 {minY}",
-                        AnchorMax = $"1 {maxY}"
-                    }
-                }, UiDropdown);
+                    Label = pair.Key,
+                    IsActive = pair.Value
+                });
             }
 
-            CuiHelper.AddUi(player, container);
+            return indicators;
+        }
+
+        private string BuildOnlineText()
+        {
+            return "Online: " + BasePlayer.activePlayerList.Count;
+        }
+
+        private string BuildTimeText()
+        {
+            var cycle = TOD_Sky.Instance?.Cycle;
+            if (cycle == null)
+            {
+                return "Time: --:--";
+            }
+
+            return "Time: " + cycle.DateTime.ToString("HH:mm");
         }
 
         private void DestroyPlayerUi(BasePlayer player)
@@ -502,48 +462,7 @@ namespace Oxide.Plugins
             }
 
             CuiHelper.DestroyUi(player, UiMain);
-            CuiHelper.DestroyUi(player, UiMain + ".MainButton");
-            CuiHelper.DestroyUi(player, UiDropdown);
-        }
-
-        private string BuildEventsText()
-        {
-            var active = new List<string>();
-
-            if (_patrolHelicopterActive)
-            {
-                active.Add("Patrol Helicopter");
-            }
-
-            if (_cargoShipActive)
-            {
-                active.Add("Cargo Ship");
-            }
-
-            if (_bradleyActive)
-            {
-                active.Add("Bradley APC");
-            }
-
-            if (_chinookActive)
-            {
-                active.Add("Chinook");
-            }
-
-            foreach (var pair in _customEvents)
-            {
-                if (pair.Value && !string.IsNullOrWhiteSpace(pair.Key))
-                {
-                    active.Add(pair.Key);
-                }
-            }
-
-            if (active.Count == 0)
-            {
-                return _config.NoActiveEventsText;
-            }
-
-            return "Активные ивенты: " + string.Join(", ", active);
+            CuiHelper.DestroyUi(player, UiButton);
         }
 
         private void API_SetCustomEventState(string eventName, bool isActive)
