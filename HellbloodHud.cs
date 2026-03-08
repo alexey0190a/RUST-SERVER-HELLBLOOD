@@ -659,12 +659,12 @@ private string GetPng(string key)
             {
                 Button =
                 {
-                    Color = _config.UiColors.ButtonColor,
+                    Color = "1 1 1 0",
                     Command = "hellbloodhud.info"
                 },
                 Text =
                 {
-                    Text = "●",
+                    Text = "",
                     FontSize = _config.UiGeometry.ButtonFontSize,
                     Align = TextAnchor.MiddleCenter,
                     Color = _config.UiColors.ButtonTextColor
@@ -680,7 +680,7 @@ private string GetPng(string key)
 
             container.Add(new CuiPanel
             {
-                Image = { Color = _config.UiColors.InfoPanelColor },
+                Image = { Color = !string.IsNullOrWhiteSpace(GetPng(_config.UiImages.MainBackgroundPng)) || !string.IsNullOrWhiteSpace(_config.UiImages.MainBackgroundUrl) ? "0 0 0 0" : _config.UiColors.InfoPanelColor },
                 RectTransform =
                 {
                     AnchorMin = _config.UiPosition.InfoAnchorMin,
@@ -980,3 +980,4 @@ private string GetPng(string key)
         }
     }
 }
+
