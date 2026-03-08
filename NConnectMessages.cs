@@ -34,6 +34,7 @@ namespace Oxide.Plugins
 
 		private string GetConnectMessageForPlayer(BasePlayer player)
 		{
+			if (permission.UserHasGroup(player.UserIDString, cfg.AdminGroupName)) return cfg.MSGOnPlayerConnectedAdmin;
 			if (permission.UserHasGroup(player.UserIDString, cfg.WarlockGroupName)) return cfg.MSGOnPlayerConnectedWarlock;
 			if (permission.UserHasGroup(player.UserIDString, cfg.LuciferGroupName)) return cfg.MSGOnPlayerConnectedLucifer;
 			if (permission.UserHasGroup(player.UserIDString, cfg.DaemonGroupName)) return cfg.MSGOnPlayerConnectedDaemon;
@@ -64,18 +65,22 @@ namespace Oxide.Plugins
 			public string ColorNicknameMSG = "#0384fc";
 			[JsonProperty("Текст в сообщении когда игроки присоединился к серверу: ")]
 			public string MSGOnPlayerConnected = "присоединился к игре.";
+			[JsonProperty("Название группы ADMIN для отдельного текста подключения: ")]
+			public string AdminGroupName = "admin";
+			[JsonProperty("Текст подключения для группы ADMIN: ")]
+			public string MSGOnPlayerConnectedAdmin = "присоединился к игре.";
 			[JsonProperty("Название группы WARLOCK для отдельного текста подключения: ")]
 			public string WarlockGroupName = "warlock";
 			[JsonProperty("Текст подключения для группы WARLOCK: ")]
-			public string MSGOnPlayerConnectedWarlock = "присоединился к игре. [WARLOCK]";
+			public string MSGOnPlayerConnectedWarlock = "присоединился к игре.";
 			[JsonProperty("Название группы LUCIFER для отдельного текста подключения: ")]
 			public string LuciferGroupName = "lucifer";
 			[JsonProperty("Текст подключения для группы LUCIFER: ")]
-			public string MSGOnPlayerConnectedLucifer = "присоединился к игре. [LUCIFER]";
+			public string MSGOnPlayerConnectedLucifer = "присоединился к игре.";
 			[JsonProperty("Название группы DAEMON для отдельного текста подключения: ")]
 			public string DaemonGroupName = "daemon";
 			[JsonProperty("Текст подключения для группы DAEMON: ")]
-			public string MSGOnPlayerConnectedDaemon = "присоединился к игре. [DAEMON]";
+			public string MSGOnPlayerConnectedDaemon = "присоединился к игре.";
 			[JsonProperty("Текст в сообщении когда игроки вышел с сервера: ")]
 			public string MSGOnPlayerDisconnected = "покинул сервер. ";
 
