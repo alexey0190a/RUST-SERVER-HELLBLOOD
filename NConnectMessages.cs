@@ -27,7 +27,8 @@ namespace Oxide.Plugins
 				if (!permission.UserHasPermission(player.UserIDString, Permission))
 				{
 					string connectMessage = GetConnectMessageForPlayer(player);
-					Server.Broadcast($"<color={cfg.ColorNicknameMSG}>{name}</color> " + $"{connectMessage}", id);
+					string connectNicknameColor = GetConnectNicknameColorForPlayer(player);
+					Server.Broadcast($"<color={connectNicknameColor}>{name}</color> " + $"{connectMessage}", id);
 				}
 			}
 		}
@@ -40,6 +41,16 @@ namespace Oxide.Plugins
 			if (permission.UserHasGroup(player.UserIDString, cfg.DaemonGroupName)) return cfg.MSGOnPlayerConnectedDaemon;
 
 			return cfg.MSGOnPlayerConnected;
+		}
+
+		private string GetConnectNicknameColorForPlayer(BasePlayer player)
+		{
+			if (permission.UserHasGroup(player.UserIDString, cfg.AdminGroupName)) return cfg.ColorNicknameOnConnectedAdmin;
+			if (permission.UserHasGroup(player.UserIDString, cfg.WarlockGroupName)) return cfg.ColorNicknameOnConnectedWarlock;
+			if (permission.UserHasGroup(player.UserIDString, cfg.LuciferGroupName)) return cfg.ColorNicknameOnConnectedLucifer;
+			if (permission.UserHasGroup(player.UserIDString, cfg.DaemonGroupName)) return cfg.ColorNicknameOnConnectedDaemon;
+
+			return cfg.ColorNicknameOnConnectedDefault;
 		}
 
 		void OnPlayerDisconnected(BasePlayer player)
@@ -65,6 +76,16 @@ namespace Oxide.Plugins
 			public string ColorNicknameMSG = "#0384fc";
 			[JsonProperty("Текст в сообщении когда игроки присоединился к серверу: ")]
 			public string MSGOnPlayerConnected = "присоединился к игре.";
+			[JsonProperty("Цвет никнейма при подключении для default ( HEX ): ")]
+			public string ColorNicknameOnConnectedDefault = "#0384fc";
+			[JsonProperty("Цвет никнейма при подключении для группы ADMIN ( HEX ): ")]
+			public string ColorNicknameOnConnectedAdmin = "#0384fc";
+			[JsonProperty("Цвет никнейма при подключении для группы WARLOCK ( HEX ): ")]
+			public string ColorNicknameOnConnectedWarlock = "#0384fc";
+			[JsonProperty("Цвет никнейма при подключении для группы LUCIFER ( HEX ): ")]
+			public string ColorNicknameOnConnectedLucifer = "#0384fc";
+			[JsonProperty("Цвет никнейма при подключении для группы DAEMON ( HEX ): ")]
+			public string ColorNicknameOnConnectedDaemon = "#0384fc";
 			[JsonProperty("Название группы ADMIN для отдельного текста подключения: ")]
 			public string AdminGroupName = "admin";
 			[JsonProperty("Текст подключения для группы ADMIN: ")]
