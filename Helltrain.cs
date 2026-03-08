@@ -2670,7 +2670,7 @@ private void StartEventLifetimeTimer()
     {
         // Никто не лутал — считаем «успешная доставка», сносим состав и готовим респавн
         ForceDestroyHellTrain();
-        StartRespawnTimer();
+        StartRespawnTimer(announceToChat: true);
     });
 
     Puts($"⏰ Lifecycle таймер запущен на {lifeMin} мин.");
@@ -2986,7 +2986,7 @@ RestoreProtectionForAll();
     }
 
     if (config.AutoRespawn && !_suppressAutoRespawn)
-    StartRespawnTimer();
+    StartRespawnTimer(announceToChat: true);
 }
 
 
@@ -3059,7 +3059,7 @@ private bool TryGetNextFixedScheduleWindowUtc(out DateTime nextStartUtc, out Dat
     return true;
 }
 
-private void StartRespawnTimer(float? overrideMinutes = null)
+private void StartRespawnTimer(float? overrideMinutes = null, bool announceToChat = false)
 {
     // idempotency: если override НЕ задан — второй вызов можно игнорировать
     if (!overrideMinutes.HasValue && respawnTimer != null && _nextRespawnUtc.HasValue)
@@ -3119,7 +3119,8 @@ private void StartRespawnTimer(float? overrideMinutes = null)
                 .Replace("{minutes}", minutes.ToString("F0"))
                 .Replace("{minutesWord}", minutesWord);
 
-            Server.Broadcast(message);
+            if (announceToChat)
+                Server.Broadcast(message);
             Puts($"FixedSchedule: Следующий <color=#ff0000>HELLTRAIN</color> ожидается через {minutes:F0} минут, следите за новостями!  (UTC={_nextRespawnUtc.Value:O})");
             return;
         }
@@ -3143,7 +3144,8 @@ private void StartRespawnTimer(float? overrideMinutes = null)
         .Replace("{minutes}", minutesLegacy.ToString("F0"))
         .Replace("{minutesWord}", minutesWordLegacy);
 
-    Server.Broadcast(messageLegacy);
+    if (announceToChat)
+        Server.Broadcast(messageLegacy);
     Puts($"⏳ Респавн через {minutesLegacy} минут");
 }
 

@@ -1995,7 +1995,7 @@ namespace Oxide.Plugins
             if (Interface == null) return;
             
             Interface = Interface.Replace("%UI_CRAFT_PANEL_TITLE%", GetLang("UI_CRAFT_PANEL_TITLE", player.UserIDString));
-            Interface = Interface.Replace("%UI_CRAFT_PANEL_DESCRIPTION%", GetLang("UI_CRAFT_PANEL_DESCRIPTION", player.UserIDString));
+            Interface = Interface.Replace("%UI_CRAFT_PANEL_DESCRIPTION%", GetLang("UI_CRAFT_PANEL_DESCRIPTION_V2", player.UserIDString));
             Interface = Interface.Replace("%UI_CRAFT_PANEL_REQUIRED_ITEMS%", GetLang("UI_CRAFT_PANEL_REQUIRED_ITEMS", player.UserIDString));
             Interface = Interface.Replace("%UI_CRAFT_PANEL_NEED_MONEY%", !permission.UserHasPermission(player.UserIDString, PermissionIgnorePayment) ? GetLang("UI_CRAFT_PANEL_NEED_MONEY", player.UserIDString, config.CraftingRecyclers.PriceCrafting) : String.Empty);
 
@@ -2658,7 +2658,7 @@ namespace Oxide.Plugins
                 ["UI_PICK_UP_TITLE"] = "<b>Pickup</b>",
                 
                 ["UI_CRAFT_PANEL_TITLE"] = "<b>HOME RECYCLER</b>",
-                ["UI_CRAFT_PANEL_DESCRIPTION"] = "To craft a <color=#73C545>recycler</color>, you need to:\n- Find all the required components and place them in your inventory\n- Go to the crafting menu and click the <color=#73C545>craft</color> button\n\nYou can also purchase this recycler on our website <color=#73C545>MYRUSTSERVER.RU</color>",
+                ["UI_CRAFT_PANEL_DESCRIPTION_V2"] = "To craft a <color=#73C545>recycler</color>, you need to:\n- Find all the required components and place them in your inventory\n- Go to the crafting menu and click the <color=#73C545>craft</color> button\n\nYou can also purchase this recycler on our website <color=#73C545>https://hellblood.gamestores.app/</color>",
                 ["UI_CRAFT_PANEL_REQUIRED_ITEMS"] = "<b>REQUIRED ITEMS FOR CRAFTING:</b>",
                 ["UI_CRAFT_PANEL_NEED_MONEY"] = "Cost : {0}$",
                 ["UI_CRAFT_PANEL_BUTTON_CRAFTING"] = "<b>CRAFT RECYCLER</b>",
@@ -2691,7 +2691,7 @@ namespace Oxide.Plugins
                 ["UI_PICK_UP_TITLE"] = "<b>Подобрать</b>",
                 
                 ["UI_CRAFT_PANEL_TITLE"] = "<b>ДОМАШНИЙ ПЕРЕРАБОТЧИК</b>",
-                ["UI_CRAFT_PANEL_DESCRIPTION"] = "Чтобы скрафтить <color=#73C545>переработчик</color>, нужно:\n- Найти все необходимые компоненты и положить в инвентарь\n- Зайти в меню крафта и нажать на кнопку <color=#73C545>скрафтить</color>\n\nВы можете приобрести данный переработчик у нас на сайте <color=#73C545>MYRUSTSERVER.RU</color>",
+                ["UI_CRAFT_PANEL_DESCRIPTION_V2"] = "Чтобы скрафтить <color=#73C545>переработчик</color>, нужно:\n- Найти все необходимые компоненты и положить в инвентарь\n- Зайти в меню крафта и нажать на кнопку <color=#73C545>скрафтить</color>\n\nВы можете приобрести данный переработчик у нас на сайте <color=#73C545>https://hellblood.gamestores.app/</color>",
                 ["UI_CRAFT_PANEL_REQUIRED_ITEMS"] = "<b>ТРЕБУЕМЫЕ ПРЕДМЕТЫ ДЛЯ СОЗДАНИЯ :</b>",
                 ["UI_CRAFT_PANEL_NEED_MONEY"] = "Стоимость : {0}$",
                 ["UI_CRAFT_PANEL_BUTTON_CRAFTING"] = "<b>СОЗДАТЬ ПЕРЕРАБОТЧИК</b>",
