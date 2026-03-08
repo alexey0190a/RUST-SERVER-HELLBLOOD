@@ -2649,6 +2649,9 @@ private void StartEventLifetimeTimer()
                 {
                     _pendingFixedScheduleCleanupUtc = null;
                     ForceDestroyHellTrain();
+                    CancelRespawnTimerOnly();
+                    _nextRespawnUtc = null;
+                    SaveRespawnState();
                     StartRespawnTimer();
                 });
 
@@ -2658,6 +2661,9 @@ private void StartEventLifetimeTimer()
 
             _pendingFixedScheduleCleanupUtc = null;
             ForceDestroyHellTrain();
+            CancelRespawnTimerOnly();
+            _nextRespawnUtc = null;
+            SaveRespawnState();
             StartRespawnTimer();
         });
 
@@ -2670,6 +2676,9 @@ private void StartEventLifetimeTimer()
     {
         // Никто не лутал — считаем «успешная доставка», сносим состав и готовим респавн
         ForceDestroyHellTrain();
+        CancelRespawnTimerOnly();
+        _nextRespawnUtc = null;
+        SaveRespawnState();
         StartRespawnTimer();
     });
 
@@ -2986,7 +2995,12 @@ RestoreProtectionForAll();
     }
 
     if (config.AutoRespawn && !_suppressAutoRespawn)
+    {
+    CancelRespawnTimerOnly();
+    _nextRespawnUtc = null;
+    SaveRespawnState();
     StartRespawnTimer();
+    }
 }
 
 
