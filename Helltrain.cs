@@ -989,9 +989,15 @@ else
 
 		[PluginReference] Plugin KitsSuite;
 		[PluginReference] private Plugin HelltrainGenerator;
+		[PluginReference] private Plugin HellbloodHud;
 
 		[PluginReference]
 private Plugin Loottable;
+
+private void SetHudState(bool isActive)
+{
+    HellbloodHud?.Call("API_SetCustomEventState", "HELLTRAIN", isActive);
+}
 
 
 private const string PERM_ADMIN = "helltrain.admin";
@@ -2100,6 +2106,7 @@ private void OnPlayerDeath(BasePlayer player, HitInfo info)
 // Хелпер: снести весь наш состав (только ивентовые entities)
 private void KillEventTrainCars(string reason, bool force = false)
 {
+	SetHudState(false);
 	StopPmcEscort(reason);
 	StopSwitchman();
 	_abortRequested = true;
@@ -3070,6 +3077,7 @@ RestoreProtectionForAll();
         _explosionDamageArmed = false;
         activeHellTrain = null;
         _trainLifecycle = null;
+        SetHudState(false);
     }
 
     if (config.AutoRespawn && !_suppressAutoRespawn)
@@ -4497,6 +4505,7 @@ UpdateTrainZoneMarker();
 
 StartEventLifetimeTimer();
 StartEngineWatchdog();
+SetHudState(true);
 
 Puts($"✅ Hell Train готов! Вагонов: {wagons.Count - wagonStartIndex}");
 if (activeHellTrain != null && !activeHellTrain.IsDestroyed)
