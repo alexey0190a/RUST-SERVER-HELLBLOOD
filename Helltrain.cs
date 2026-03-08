@@ -1323,14 +1323,14 @@ private void EnsureRespawnScheduledFromStateOrDefault()
     {
         _nextRespawnUtc = null;
         SaveRespawnState();
-        StartRespawnTimer(null, false);
+        StartRespawnTimer();
         return;
     }
 
     // Variant B: if no state -> schedule by TrainRespawnMinutes
     if (!_nextRespawnUtc.HasValue)
     {
-        StartRespawnTimer(null, false);
+        StartRespawnTimer();
         return;
     }
 
@@ -1344,7 +1344,7 @@ private void EnsureRespawnScheduledFromStateOrDefault()
     {
         _nextRespawnUtc = null;
         SaveRespawnState();
-        StartRespawnTimer(null, false);
+        StartRespawnTimer();
         return;
     }
 
@@ -3059,7 +3059,7 @@ private bool TryGetNextFixedScheduleWindowUtc(out DateTime nextStartUtc, out Dat
     return true;
 }
 
-private void StartRespawnTimer(float? overrideMinutes = null, bool broadcastAnnouncement = true)
+private void StartRespawnTimer(float? overrideMinutes = null)
 {
     // idempotency: если override НЕ задан — второй вызов можно игнорировать
     if (!overrideMinutes.HasValue && respawnTimer != null && _nextRespawnUtc.HasValue)
@@ -3119,8 +3119,7 @@ private void StartRespawnTimer(float? overrideMinutes = null, bool broadcastAnno
                 .Replace("{minutes}", minutes.ToString("F0"))
                 .Replace("{minutesWord}", minutesWord);
 
-            if (broadcastAnnouncement)
-                Server.Broadcast(message);
+            Server.Broadcast(message);
             Puts($"FixedSchedule: Следующий <color=#ff0000>HELLTRAIN</color> ожидается через {minutes:F0} минут, следите за новостями!  (UTC={_nextRespawnUtc.Value:O})");
             return;
         }
@@ -3144,8 +3143,7 @@ private void StartRespawnTimer(float? overrideMinutes = null, bool broadcastAnno
         .Replace("{minutes}", minutesLegacy.ToString("F0"))
         .Replace("{minutesWord}", minutesWordLegacy);
 
-    if (broadcastAnnouncement)
-        Server.Broadcast(messageLegacy);
+    Server.Broadcast(messageLegacy);
     Puts($"⏳ Респавн через {minutesLegacy} минут");
 }
 
