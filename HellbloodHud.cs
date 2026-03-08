@@ -5,7 +5,7 @@ using UnityEngine;
 
 namespace Oxide.Plugins
 {
-    [Info("HellbloodHud", "BLOODHELL", "1.0.0")]
+    [Info("HellbloodHud", "BLOODHELL", "1.0.1")]
     [Description("Simple HUD button with dropdown actions and active events line.")]
     public class HellbloodHud : RustPlugin
     {
@@ -24,16 +24,18 @@ namespace Oxide.Plugins
         private class ConfigData
         {
             public string MainButtonText = "МЕНЮ";
+            public bool UseImageMainButton = false;
             public string NoActiveEventsText = "Активные ивенты: нет";
             public UiPosition UiPosition = new UiPosition();
+            public UiGeometry UiGeometry = new UiGeometry();
             public UiColors UiColors = new UiColors();
             public List<DropdownButtonConfig> DropdownButtons = new List<DropdownButtonConfig>
             {
-                new DropdownButtonConfig { Text = "Киты", Command = "kit" },
-                new DropdownButtonConfig { Text = "Телепорт", Command = "tpr" },
-                new DropdownButtonConfig { Text = "Магазин", Command = "shop" },
-                new DropdownButtonConfig { Text = "Кланы", Command = "clan" },
-                new DropdownButtonConfig { Text = "Инфо", Command = "info" }
+                new DropdownButtonConfig { Text = "Киты", Command = "kit", CommandType = "console" },
+                new DropdownButtonConfig { Text = "Телепорт", Command = "tpr", CommandType = "console" },
+                new DropdownButtonConfig { Text = "Магазин", Command = "shop", CommandType = "console" },
+                new DropdownButtonConfig { Text = "Кланы", Command = "clan", CommandType = "console" },
+                new DropdownButtonConfig { Text = "Инфо", Command = "info", CommandType = "console" }
             };
         }
 
@@ -41,12 +43,26 @@ namespace Oxide.Plugins
         {
             public string MainAnchorMin = "0.02 0.93";
             public string MainAnchorMax = "0.18 0.97";
+            public string MainOffsetMin = "0 0";
+            public string MainOffsetMax = "0 0";
 
             public string EventsAnchorMin = "0.02 0.97";
             public string EventsAnchorMax = "0.35 0.995";
+            public string EventsOffsetMin = "0 0";
+            public string EventsOffsetMax = "0 0";
 
             public string DropdownAnchorMin = "0.02 0.73";
             public string DropdownAnchorMax = "0.18 0.93";
+            public string DropdownOffsetMin = "0 0";
+            public string DropdownOffsetMax = "0 0";
+        }
+
+        private class UiGeometry
+        {
+            public int MainButtonFontSize = 14;
+            public int EventsFontSize = 12;
+            public int DropdownButtonFontSize = 12;
+            public float DropdownButtonSpacing = 0.005f;
         }
 
         private class UiColors
@@ -65,6 +81,7 @@ namespace Oxide.Plugins
         {
             public string Text;
             public string Command;
+            public string CommandType;
         }
 
         protected override void LoadDefaultConfig()
@@ -93,6 +110,11 @@ namespace Oxide.Plugins
             if (_config.UiPosition == null)
             {
                 _config.UiPosition = new UiPosition();
+            }
+
+            if (_config.UiGeometry == null)
+            {
+                _config.UiGeometry = new UiGeometry();
             }
 
             if (_config.UiColors == null)
@@ -242,18 +264,23 @@ namespace Oxide.Plugins
                 return;
             }
 
-            ExecutePlayerCommand(player, button.Command.Trim());
+            ExecutePlayerCommand(player, button.Command.Trim(), button.CommandType);
         }
 
-        private void ExecutePlayerCommand(BasePlayer player, string command)
+        private void ExecutePlayerCommand(BasePlayer player, string command, string commandType)
         {
             if (player == null || string.IsNullOrWhiteSpace(command))
             {
                 return;
             }
 
-            if (command.StartsWith("/"))
+            if (string.Equals(commandType, "chat", StringComparison.OrdinalIgnoreCase))
             {
+                if (!command.StartsWith("/"))
+                {
+                    command = "/" + command;
+                }
+
                 player.SendConsoleCommand("chat.say", command);
                 return;
             }
@@ -329,7 +356,13 @@ namespace Oxide.Plugins
             container.Add(new CuiPanel
             {
                 Image = { Color = _config.UiColors.EventsPanelColor },
-                RectTransform = { AnchorMin = _config.UiPosition.EventsAnchorMin, AnchorMax = _config.UiPosition.EventsAnchorMax }
+                RectTransform =
+                {
+                    AnchorMin = _config.UiPosition.EventsAnchorMin,
+                    AnchorMax = _config.UiPosition.EventsAnchorMax,
+                    OffsetMin = _config.UiPosition.EventsOffsetMin,
+                    OffsetMax = _config.UiPosition.EventsOffsetMax
+                }
             }, "Hud", UiMain);
 
             container.Add(new CuiLabel
@@ -337,7 +370,7 @@ namespace Oxide.Plugins
                 Text =
                 {
                     Text = BuildEventsText(),
-                    FontSize = 12,
+                    FontSize = _config.UiGeometry.EventsFontSize,
                     Align = TextAnchor.MiddleLeft,
                     Color = _config.UiColors.EventsTextColor
                 },
@@ -354,11 +387,17 @@ namespace Oxide.Plugins
                 Text =
                 {
                     Text = _config.MainButtonText,
-                    FontSize = 14,
+                    FontSize = _config.UiGeometry.MainButtonFontSize,
                     Align = TextAnchor.MiddleCenter,
                     Color = _config.UiColors.MainButtonTextColor
                 },
-                RectTransform = { AnchorMin = _config.UiPosition.MainAnchorMin, AnchorMax = _config.UiPosition.MainAnchorMax }
+                RectTransform =
+                {
+                    AnchorMin = _config.UiPosition.MainAnchorMin,
+                    AnchorMax = _config.UiPosition.MainAnchorMax,
+                    OffsetMin = _config.UiPosition.MainOffsetMin,
+                    OffsetMax = _config.UiPosition.MainOffsetMax
+                }
             }, "Hud", UiMain + ".MainButton");
 
             CuiHelper.AddUi(player, container);
@@ -391,11 +430,29 @@ namespace Oxide.Plugins
             container.Add(new CuiPanel
             {
                 Image = { Color = "0 0 0 0" },
-                RectTransform = { AnchorMin = _config.UiPosition.DropdownAnchorMin, AnchorMax = _config.UiPosition.DropdownAnchorMax }
+                RectTransform =
+                {
+                    AnchorMin = _config.UiPosition.DropdownAnchorMin,
+                    AnchorMax = _config.UiPosition.DropdownAnchorMax,
+                    OffsetMin = _config.UiPosition.DropdownOffsetMin,
+                    OffsetMax = _config.UiPosition.DropdownOffsetMax
+                }
             }, "Hud", UiDropdown);
 
             var count = buttons.Count;
-            var heightStep = 1f / count;
+            var spacing = _config.UiGeometry.DropdownButtonSpacing;
+            if (spacing < 0f)
+            {
+                spacing = 0f;
+            }
+
+            var totalSpacing = spacing * (count - 1);
+            var buttonHeight = (1f - totalSpacing) / count;
+            if (buttonHeight <= 0f)
+            {
+                buttonHeight = 1f / count;
+                spacing = 0f;
+            }
 
             for (var i = 0; i < count; i++)
             {
@@ -405,8 +462,12 @@ namespace Oxide.Plugins
                     continue;
                 }
 
-                var minY = 1f - ((i + 1) * heightStep);
-                var maxY = 1f - (i * heightStep);
+                var maxY = 1f - (i * (buttonHeight + spacing));
+                var minY = maxY - buttonHeight;
+                if (minY < 0f)
+                {
+                    minY = 0f;
+                }
 
                 container.Add(new CuiButton
                 {
@@ -418,7 +479,7 @@ namespace Oxide.Plugins
                     Text =
                     {
                         Text = btn.Text ?? string.Empty,
-                        FontSize = 12,
+                        FontSize = _config.UiGeometry.DropdownButtonFontSize,
                         Align = TextAnchor.MiddleCenter,
                         Color = _config.UiColors.DropdownButtonTextColor
                     },
@@ -494,6 +555,17 @@ namespace Oxide.Plugins
 
             _customEvents[eventName.Trim()] = isActive;
             RefreshHudForAllPlayers();
+        }
+
+        private bool API_GetCustomEventState(string eventName)
+        {
+            if (string.IsNullOrWhiteSpace(eventName))
+            {
+                return false;
+            }
+
+            bool isActive;
+            return _customEvents.TryGetValue(eventName.Trim(), out isActive) && isActive;
         }
     }
 }
