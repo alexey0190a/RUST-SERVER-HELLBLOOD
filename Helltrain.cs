@@ -562,17 +562,17 @@ private void ArmPmcHackExplosionFlow(HackableLockedCrate crate)
 
     _pmcHackAnnounce5MinTimer = timer.Once(5f * 60f, () =>
     {
-        Server.Broadcast("⚠️ Helltrain заминирован: до взрыва 5 минут!");
+        Server.Broadcast("Helltrain заминирован: до взрыва 5 минут!");
     });
 
     _pmcHackAnnounce2MinTimer = timer.Once(8f * 60f, () =>
     {
-        Server.Broadcast("⚠️ Helltrain заминирован: до взрыва 2 минуты!");
+        Server.Broadcast("Helltrain заминирован: до взрыва 2 минуты!");
     });
 
     _pmcHackAnnounce1MinTimer = timer.Once(9f * 60f, () =>
     {
-        Server.Broadcast("⚠️ Helltrain заминирован: до взрыва 1 минута!");
+        Server.Broadcast("Helltrain заминирован: до взрыва 1 минута!");
     });
 
     _pmcHackExplosionTimer = timer.Once(PMC_HACK_EVENT_END_DELAY_SECONDS, () =>
@@ -580,7 +580,7 @@ private void ArmPmcHackExplosionFlow(HackableLockedCrate crate)
         DestroyTrainAfterExplosion();
     });
 
-    Server.Broadcast("🚨 Helltrain заминирован! Взрыв через 10 минут!");
+    Server.Broadcast("Helltrain заминирован! Взрыв через 10 минут!");
 
     Puts($"[PMC HACK FLOW] armed: C4 in {PMC_HACK_C4_SPAWN_DELAY_SECONDS:F0}s, event end in {PMC_HACK_EVENT_END_DELAY_SECONDS:F0}s");
 }
@@ -1323,14 +1323,14 @@ private void EnsureRespawnScheduledFromStateOrDefault()
     {
         _nextRespawnUtc = null;
         SaveRespawnState();
-        StartRespawnTimer();
+        StartRespawnTimer(null, false);
         return;
     }
 
     // Variant B: if no state -> schedule by TrainRespawnMinutes
     if (!_nextRespawnUtc.HasValue)
     {
-        StartRespawnTimer();
+        StartRespawnTimer(null, false);
         return;
     }
 
@@ -1344,7 +1344,7 @@ private void EnsureRespawnScheduledFromStateOrDefault()
     {
         _nextRespawnUtc = null;
         SaveRespawnState();
-        StartRespawnTimer();
+        StartRespawnTimer(null, false);
         return;
     }
 
@@ -2491,28 +2491,28 @@ public FixedScheduleSettings FixedSchedule { get; set; } = new FixedScheduleSett
     public class MessageSettings
     {
         [JsonProperty("Спавн поезда")]
-        public string TrainSpawned { get; set; } = "🚂 {trainName} появился в квадрате {grid}!";
+        public string TrainSpawned { get; set; } = "<color=#FF0000>[HELLBLOOD]</color> : {trainName}";
         
         [JsonProperty("Направление движения")]
-        public string TrainDirection { get; set; } = "🚂 {trainName} движется из {fromGrid} → {toGrid}";
+        public string TrainDirection { get; set; } = "<color=#FF0000>[HELLBLOOD]</color> : {trainName}";
         
         [JsonProperty("Взлом начат")]
-        public string HackStarted { get; set; } = "🔥 {trainName} ВЗЛОМАН! {minutes} МИНУТ ДО ВЗРЫВА!";
+        public string HackStarted { get; set; } = "{trainName} ВЗЛОМАН! {minutes} МИНУТ ДО ВЗРЫВА!";
         
         [JsonProperty("Отсчёт взрыва (минуты)")]
-        public string ExplosionMinutes { get; set; } = "⚠️ {trainName} взорвётся через {minutes} {minutesWord}!";
+        public string ExplosionMinutes { get; set; } = "{trainName} взорвётся через {minutes} {minutesWord}!";
         
         [JsonProperty("Отсчёт взрыва (секунды)")]
-        public string ExplosionSeconds { get; set; } = "💥 {trainName} взорвётся через {seconds} секунд!";
+        public string ExplosionSeconds { get; set; } = "{trainName} взорвётся через {seconds} секунд!";
         
         [JsonProperty("Взрыв")]
-        public string Exploded { get; set; } = "💥 {trainName} ВЗОРВАН!";
+        public string Exploded { get; set; } = "{trainName} ВЗОРВАН!";
         
         [JsonProperty("Успешная разгрузка")]
         public string SuccessfulDelivery { get; set; } = "✅ {trainName} успешно разгрузился";
         
                 [JsonProperty("Следующий поезд")]
-        public string NextTrain { get; set; } = "Следующий <color=#ff0000>HELLTRAIN</color> ожидается через {minutes}. Следите за новостями. {minutesWord}";
+        public string NextTrain { get; set; } = "<color=#FF0000>[HELLBLOOD]</color> : Следующий поезд ожидается через {minutes} {minutesWord}, следите за новостями!";
     }
 
 // STABILITY: cowcatcher ...
@@ -2717,7 +2717,7 @@ private void CancelEventLifetimeTimers()
         );
     }
 
-    Server.Broadcast("⚠️ Поезд дрожит... взрыв близко!");
+    Server.Broadcast("Поезд дрожит... взрыв близко!");
 }
 
 // Периодическая проверка состояния состава/сетки (безопасная заглушка)
@@ -3059,7 +3059,7 @@ private bool TryGetNextFixedScheduleWindowUtc(out DateTime nextStartUtc, out Dat
     return true;
 }
 
-private void StartRespawnTimer(float? overrideMinutes = null)
+private void StartRespawnTimer(float? overrideMinutes = null, bool broadcastAnnouncement = true)
 {
     // idempotency: если override НЕ задан — второй вызов можно игнорировать
     if (!overrideMinutes.HasValue && respawnTimer != null && _nextRespawnUtc.HasValue)
@@ -3119,7 +3119,8 @@ private void StartRespawnTimer(float? overrideMinutes = null)
                 .Replace("{minutes}", minutes.ToString("F0"))
                 .Replace("{minutesWord}", minutesWord);
 
-            Server.Broadcast(message);
+            if (broadcastAnnouncement)
+                Server.Broadcast(message);
             Puts($"FixedSchedule: Следующий <color=#ff0000>HELLTRAIN</color> ожидается через {minutes:F0} минут, следите за новостями!  (UTC={_nextRespawnUtc.Value:O})");
             return;
         }
@@ -3143,7 +3144,8 @@ private void StartRespawnTimer(float? overrideMinutes = null)
         .Replace("{minutes}", minutesLegacy.ToString("F0"))
         .Replace("{minutesWord}", minutesWordLegacy);
 
-    Server.Broadcast(messageLegacy);
+    if (broadcastAnnouncement)
+        Server.Broadcast(messageLegacy);
     Puts($"⏳ Респавн через {minutesLegacy} минут");
 }
 
@@ -4378,10 +4380,24 @@ _trainLifecycle = new TrainLifecycle(
 string trainName = config.CompositionNames[_trainLifecycle.CompositionType];
 _trainLifecycle.LastGrid = GetGridPosition(trainEngine.transform.position);
 
-// ✅ ИЗМЕНЕНО: АНОНС СПАВНА ИЗ КОНФИГА
-string spawnMessage = config.Messages.TrainSpawned
-    .Replace("{trainName}", trainName)
-    .Replace("{grid}", _trainLifecycle.LastGrid);
+string spawnMessage;
+switch ((_trainLifecycle.CompositionType ?? string.Empty).ToLowerInvariant())
+{
+    case "bandit":
+        spawnMessage = $"<color=#FF0000>[HELLBLOOD]</color> : Банда рейдеров захватила поезд и мчится по рельсам, охраняя награбленный груз {_trainLifecycle.LastGrid}.";
+        break;
+    case "coblab":
+        spawnMessage = $"<color=#FF0000>[HELLBLOOD]</color> : Учёные Cobalt отправили поезд с ценным грузом по железной дороге {_trainLifecycle.LastGrid}.";
+        break;
+    case "pmc":
+        spawnMessage = $"<color=#FF0000>[HELLBLOOD]</color> : Подразделение ЧВК сопровождает бронированный состав с тяжёлой техникой {_trainLifecycle.LastGrid}.";
+        break;
+    default:
+        spawnMessage = config.Messages.TrainSpawned
+            .Replace("{trainName}", trainName)
+            .Replace("{grid}", _trainLifecycle.LastGrid);
+        break;
+}
 
 Server.Broadcast(spawnMessage);
 
