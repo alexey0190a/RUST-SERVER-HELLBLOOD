@@ -12,11 +12,13 @@ namespace Oxide.Plugins
     [Description("HUD with info button, time panel and fixed event tiles.")]
     public class HellbloodHud : RustPlugin
     {
-        private const string UiMain = "HellbloodHud.UI.Main";
+        private const string UiStatic = "HellbloodHud.UI.Static";
+        private const string UiDynamic = "HellbloodHud.UI.Dynamic";
         private const string UiButton = "HellbloodHud.UI.Button";
         private const string UiEditor = "HellbloodHud.UI.Editor";
         private const string UiEditorStatus = "HellbloodHud.UI.Editor.Status";
-		private const string UiMainBackground = "HellbloodHud.UI.Main.Background";
+		private const string UiRingBackground = "HellbloodHud.UI.Ring.Background";
+		private const string UiPanelBackground = "HellbloodHud.UI.Panel.Background";
 
 		[PluginReference] private Plugin ImageLibrary;
 
@@ -37,6 +39,7 @@ namespace Oxide.Plugins
     public UiGeometry UiGeometry = new UiGeometry();
     public UiColors UiColors = new UiColors();
     public UiImages UiImages = new UiImages();
+	public UiIcons UiIcons = new UiIcons();
 }
 
         private class UiPosition
@@ -50,10 +53,11 @@ namespace Oxide.Plugins
             public string InfoAnchorMax = "0.45 0.97";
             public string InfoOffsetMin = "0 0";
             public string InfoOffsetMax = "0 0";
-			public string BackgroundAnchorMin = "0.065 0.93";
-			public string BackgroundAnchorMax = "0.45 0.97";
-			public string BackgroundOffsetMin = "0 0";
-			public string BackgroundOffsetMax = "0 0";
+			public string RingBackgroundAnchorMin = "0.065 0.93";
+public string RingBackgroundAnchorMax = "0.12 0.99";
+public string RingBackgroundOffsetMin = "0 0";
+public string RingBackgroundOffsetMax = "0 0";
+
 
             public string EventTileHelltrainMin = "0.42 0.28";
             public string EventTileHelltrainMax = "0.57 0.46";
@@ -97,8 +101,27 @@ namespace Oxide.Plugins
 		
 		private class UiImages
 {
-    public string MainBackgroundPng = "";
-    public string MainBackgroundUrl = "";
+    public string RingBackgroundPng = "";
+    public string RingBackgroundUrl = "";
+
+    public string InfoPanelPng = "";
+    public string InfoPanelUrl = "";
+}
+
+private class UiIcons
+{
+    public EventIconSet Helltrain = new EventIconSet();
+    public EventIconSet Convoy = new EventIconSet();
+    public EventIconSet Cargo = new EventIconSet();
+    public EventIconSet Airdrop = new EventIconSet();
+    public EventIconSet Chinook = new EventIconSet();
+    public EventIconSet Helitiers = new EventIconSet();
+}
+
+private class EventIconSet
+{
+    public string Active = "";
+    public string Inactive = "";
 }
 
         private class EditorState
@@ -155,6 +178,11 @@ namespace Oxide.Plugins
     _config.UiImages = new UiImages();
 }
 
+if (_config.UiIcons == null)
+{
+    _config.UiIcons = new UiIcons();
+}
+
             SaveConfig();
         }
 
@@ -182,7 +210,8 @@ namespace Oxide.Plugins
 
             foreach (var player in BasePlayer.activePlayerList)
             {
-                DestroyPlayerUi(player);
+                DestroyStaticUi(player);
+                DestroyDynamicUi(player);
                 DestroyEditorUi(player);
             }
 
@@ -190,10 +219,55 @@ namespace Oxide.Plugins
             _editorStateByPlayer.Clear();
         }
 
-        private void OnPlayerInit(BasePlayer player)
+private void ScheduleDelayedHudRefresh(BasePlayer player, float delay = 1f)
+{
+    if (player == null)
+    {
+        return;
+    }
+
+    timer.Once(delay, () =>
+    {
+        if (player == null || !player.IsConnected)
         {
-            ShowPlayerUi(player);
+            return;
         }
+
+        DestroyStaticUi(player);
+        DestroyDynamicUi(player);
+        ShowStaticUi(player);
+        ShowDynamicUi(player);
+    });
+}
+
+        private void OnPlayerInit(BasePlayer player)
+{
+}
+
+private void OnPlayerSleepEnded(BasePlayer player)
+{
+    if (player == null || !player.IsConnected)
+    {
+        return;
+    }
+
+    DestroyStaticUi(player);
+    DestroyDynamicUi(player);
+    ShowStaticUi(player);
+    ShowDynamicUi(player);
+    ScheduleDelayedHudRefresh(player, 1f);
+}
+
+private void OnPlayerRespawned(BasePlayer player)
+{
+    if (player == null || !player.IsConnected)
+    {
+        return;
+    }
+
+    ScheduleDelayedHudRefresh(player, 0.5f);
+}
+
 
         private void OnPlayerDisconnected(BasePlayer player, string reason)
         {
@@ -202,7 +276,8 @@ namespace Oxide.Plugins
                 return;
             }
 
-            DestroyPlayerUi(player);
+            DestroyStaticUi(player);
+            DestroyDynamicUi(player);
             DestroyEditorUi(player);
             _editorStateByPlayer.Remove(player.userID);
         }
@@ -312,7 +387,7 @@ namespace Oxide.Plugins
 
             if (action == "next")
             {
-                state.TargetIndex = (state.TargetIndex + 1) % 8;
+                state.TargetIndex = (state.TargetIndex + 1) % 10;
                 UpdateEditorOverlayStatus(player, state);
                 return;
             }
@@ -322,7 +397,7 @@ namespace Oxide.Plugins
                 state.TargetIndex--;
                 if (state.TargetIndex < 0)
                 {
-                    state.TargetIndex = 7;
+                    state.TargetIndex = 9;
                 }
                 UpdateEditorOverlayStatus(player, state);
                 return;
@@ -379,66 +454,72 @@ namespace Oxide.Plugins
         }
 
         private void ApplyNudge(int targetIndex, float x, float y)
-        {
-            switch (targetIndex)
-            {
-                case 0:
-                    ShiftAnchors(ref _config.UiPosition.ButtonAnchorMin, ref _config.UiPosition.ButtonAnchorMax, x, y);
-                    return;
-                case 1:
-                    ShiftAnchors(ref _config.UiPosition.InfoAnchorMin, ref _config.UiPosition.InfoAnchorMax, x, y);
-                    return;
-                case 2:
-                    ShiftAnchors(ref _config.UiPosition.EventTileHelltrainMin, ref _config.UiPosition.EventTileHelltrainMax, x, y);
-                    return;
-                case 3:
-                    ShiftAnchors(ref _config.UiPosition.EventTileConvoyMin, ref _config.UiPosition.EventTileConvoyMax, x, y);
-                    return;
-                case 4:
-                    ShiftAnchors(ref _config.UiPosition.EventTileCargoMin, ref _config.UiPosition.EventTileCargoMax, x, y);
-                    return;
-                case 5:
-                    ShiftAnchors(ref _config.UiPosition.EventTileAirdropMin, ref _config.UiPosition.EventTileAirdropMax, x, y);
-                    return;
-                case 6:
-                    ShiftAnchors(ref _config.UiPosition.EventTileChinookMin, ref _config.UiPosition.EventTileChinookMax, x, y);
-                    return;
-                case 7:
-                    ShiftAnchors(ref _config.UiPosition.EventTileHelitiersMin, ref _config.UiPosition.EventTileHelitiersMax, x, y);
-                    return;
-            }
-        }
+{
+    switch (targetIndex)
+    {
+        case 0:
+            ShiftAnchors(ref _config.UiPosition.ButtonAnchorMin, ref _config.UiPosition.ButtonAnchorMax, x, y);
+            return;
+        case 1:
+            ShiftAnchors(ref _config.UiPosition.InfoAnchorMin, ref _config.UiPosition.InfoAnchorMax, x, y);
+            return;
+        case 2:
+            ShiftAnchors(ref _config.UiPosition.RingBackgroundAnchorMin, ref _config.UiPosition.RingBackgroundAnchorMax, x, y);
+            return;
+        case 3:
+            ShiftAnchors(ref _config.UiPosition.EventTileHelltrainMin, ref _config.UiPosition.EventTileHelltrainMax, x, y);
+            return;
+        case 4:
+            ShiftAnchors(ref _config.UiPosition.EventTileConvoyMin, ref _config.UiPosition.EventTileConvoyMax, x, y);
+            return;
+        case 5:
+            ShiftAnchors(ref _config.UiPosition.EventTileCargoMin, ref _config.UiPosition.EventTileCargoMax, x, y);
+            return;
+        case 6:
+            ShiftAnchors(ref _config.UiPosition.EventTileAirdropMin, ref _config.UiPosition.EventTileAirdropMax, x, y);
+            return;
+        case 7:
+            ShiftAnchors(ref _config.UiPosition.EventTileChinookMin, ref _config.UiPosition.EventTileChinookMax, x, y);
+            return;
+        case 8:
+            ShiftAnchors(ref _config.UiPosition.EventTileHelitiersMin, ref _config.UiPosition.EventTileHelitiersMax, x, y);
+            return;
+    }
+}
 
-        private void ApplyResize(int targetIndex, float x, float y)
-        {
-            switch (targetIndex)
-            {
-                case 0:
-                    StretchAnchors(ref _config.UiPosition.ButtonAnchorMax, x, y);
-                    return;
-                case 1:
-                    StretchAnchors(ref _config.UiPosition.InfoAnchorMax, x, y);
-                    return;
-                case 2:
-                    StretchAnchors(ref _config.UiPosition.EventTileHelltrainMax, x, y);
-                    return;
-                case 3:
-                    StretchAnchors(ref _config.UiPosition.EventTileConvoyMax, x, y);
-                    return;
-                case 4:
-                    StretchAnchors(ref _config.UiPosition.EventTileCargoMax, x, y);
-                    return;
-                case 5:
-                    StretchAnchors(ref _config.UiPosition.EventTileAirdropMax, x, y);
-                    return;
-                case 6:
-                    StretchAnchors(ref _config.UiPosition.EventTileChinookMax, x, y);
-                    return;
-                case 7:
-                    StretchAnchors(ref _config.UiPosition.EventTileHelitiersMax, x, y);
-                    return;
-            }
-        }
+       private void ApplyResize(int targetIndex, float x, float y)
+{
+    switch (targetIndex)
+    {
+        case 0:
+            StretchAnchors(ref _config.UiPosition.ButtonAnchorMax, x, y);
+            return;
+        case 1:
+            StretchAnchors(ref _config.UiPosition.InfoAnchorMax, x, y);
+            return;
+        case 2:
+            StretchAnchors(ref _config.UiPosition.RingBackgroundAnchorMax, x, y);
+            return;
+        case 3:
+            StretchAnchors(ref _config.UiPosition.EventTileHelltrainMax, x, y);
+            return;
+        case 4:
+            StretchAnchors(ref _config.UiPosition.EventTileConvoyMax, x, y);
+            return;
+        case 5:
+            StretchAnchors(ref _config.UiPosition.EventTileCargoMax, x, y);
+            return;
+        case 6:
+            StretchAnchors(ref _config.UiPosition.EventTileAirdropMax, x, y);
+            return;
+        case 7:
+            StretchAnchors(ref _config.UiPosition.EventTileChinookMax, x, y);
+            return;
+        case 8:
+            StretchAnchors(ref _config.UiPosition.EventTileHelitiersMax, x, y);
+            return;
+    }
+}
 
         private void ShiftAnchors(ref string min, ref string max, float x, float y)
         {
@@ -557,7 +638,8 @@ private string GetPng(string key)
         {
             foreach (var player in BasePlayer.activePlayerList)
             {
-                ShowPlayerUi(player);
+                ShowStaticUi(player);
+                ShowDynamicUi(player);
             }
         }
 
@@ -565,7 +647,7 @@ private string GetPng(string key)
         {
             foreach (var player in BasePlayer.activePlayerList)
             {
-                ShowPlayerUi(player);
+                ShowDynamicUi(player);
             }
         }
 
@@ -576,23 +658,25 @@ private string GetPng(string key)
                 return;
             }
 
-            DestroyPlayerUi(player);
-            ShowPlayerUi(player);
+            DestroyStaticUi(player);
+            DestroyDynamicUi(player);
+            ShowStaticUi(player);
+            ShowDynamicUi(player);
         }
 		
-		private void AddMainBackground(CuiElementContainer container)
+		private void AddRingBackground(CuiElementContainer container)
 {
     if (container == null)
     {
         return;
     }
 
-    var png = GetPng(_config.UiImages.MainBackgroundPng);
+    var png = GetPng(_config.UiImages.RingBackgroundPng);
     if (!string.IsNullOrWhiteSpace(png))
     {
         container.Add(new CuiElement
         {
-            Name = UiMainBackground,
+            Name = UiRingBackground,
             Parent = "Hud",
             Components =
             {
@@ -603,78 +687,144 @@ private string GetPng(string key)
                 },
                 new CuiRectTransformComponent
                 {
-                    AnchorMin = _config.UiPosition.BackgroundAnchorMin,
-                    AnchorMax = _config.UiPosition.BackgroundAnchorMax,
-                    OffsetMin = _config.UiPosition.BackgroundOffsetMin,
-                    OffsetMax = _config.UiPosition.BackgroundOffsetMax
+                    AnchorMin = _config.UiPosition.ButtonAnchorMin,
+                    AnchorMax = _config.UiPosition.ButtonAnchorMax
                 }
             }
         });
         return;
     }
 
-    if (!string.IsNullOrWhiteSpace(_config.UiImages.MainBackgroundUrl))
+    if (!string.IsNullOrWhiteSpace(_config.UiImages.RingBackgroundUrl))
     {
         container.Add(new CuiElement
         {
-            Name = UiMainBackground,
+            Name = UiRingBackground,
             Parent = "Hud",
             Components =
             {
                 new CuiRawImageComponent
                 {
-                    Url = _config.UiImages.MainBackgroundUrl,
+                    Url = _config.UiImages.RingBackgroundUrl,
                     Color = "1 1 1 1"
                 },
                 new CuiRectTransformComponent
                 {
-                    AnchorMin = _config.UiPosition.BackgroundAnchorMin,
-                    AnchorMax = _config.UiPosition.BackgroundAnchorMax,
-                    OffsetMin = _config.UiPosition.BackgroundOffsetMin,
-                    OffsetMax = _config.UiPosition.BackgroundOffsetMax
+                    AnchorMin = _config.UiPosition.ButtonAnchorMin,
+                    AnchorMax = _config.UiPosition.ButtonAnchorMax
                 }
             }
         });
     }
 }
 
-        private void ShowPlayerUi(BasePlayer player)
+private void AddPanelBackground(CuiElementContainer container)
+{
+    if (container == null)
+    {
+        return;
+    }
+
+    var png = GetPng(_config.UiImages.InfoPanelPng);
+    if (!string.IsNullOrWhiteSpace(png))
+    {
+        container.Add(new CuiElement
+        {
+            Name = UiPanelBackground,
+Parent = "Hud",
+            Components =
+            {
+                new CuiRawImageComponent
+                {
+                    Png = png,
+                    Color = "1 1 1 1"
+                },
+                new CuiRectTransformComponent
+                {
+                    AnchorMin = _config.UiPosition.InfoAnchorMin,
+                    AnchorMax = _config.UiPosition.InfoAnchorMax
+                }
+            }
+        });
+        return;
+    }
+
+    if (!string.IsNullOrWhiteSpace(_config.UiImages.InfoPanelUrl))
+    {
+        container.Add(new CuiElement
+        {
+            Name = UiPanelBackground,
+Parent = "Hud",
+            Components =
+            {
+                new CuiRawImageComponent
+                {
+                    Url = _config.UiImages.InfoPanelUrl,
+                    Color = "1 1 1 1"
+                },
+                new CuiRectTransformComponent
+                {
+                    AnchorMin = _config.UiPosition.InfoAnchorMin,
+                    AnchorMax = _config.UiPosition.InfoAnchorMax
+                }
+            }
+        });
+    }
+}
+
+        private void ShowStaticUi(BasePlayer player)
         {
             if (player == null || !player.IsConnected)
             {
                 return;
             }
 
-            DestroyPlayerUi(player);
+            DestroyStaticUi(player);
 
             var container = new CuiElementContainer();
-			AddMainBackground(container);
-            container.Add(new CuiButton
-            {
-                Button =
-                {
-                    Color = _config.UiColors.ButtonColor,
-                    Command = "hellbloodhud.info"
-                },
-                Text =
-                {
-                    Text = "●",
-                    FontSize = _config.UiGeometry.ButtonFontSize,
-                    Align = TextAnchor.MiddleCenter,
-                    Color = _config.UiColors.ButtonTextColor
-                },
-                RectTransform =
-                {
-                    AnchorMin = _config.UiPosition.ButtonAnchorMin,
-                    AnchorMax = _config.UiPosition.ButtonAnchorMax,
-                    OffsetMin = _config.UiPosition.ButtonOffsetMin,
-                    OffsetMax = _config.UiPosition.ButtonOffsetMax
-                }
-            }, "Hud", UiButton);
 
+AddRingBackground(container);
+AddPanelBackground(container);
+
+container.Add(new CuiButton
+{
+    Button =
+    {
+        Color = "1 1 1 0",
+        Command = "hellbloodhud.info"
+    },
+    Text =
+    {
+        Text = "",
+        FontSize = _config.UiGeometry.ButtonFontSize,
+        Align = TextAnchor.MiddleCenter,
+        Color = _config.UiColors.ButtonTextColor
+    },
+    RectTransform =
+    {
+        AnchorMin = _config.UiPosition.ButtonAnchorMin,
+        AnchorMax = _config.UiPosition.ButtonAnchorMax,
+        OffsetMin = _config.UiPosition.ButtonOffsetMin,
+        OffsetMax = _config.UiPosition.ButtonOffsetMax
+    }
+}, "Hud", UiButton);
+
+CuiHelper.AddUi(player, container);
+        }
+
+        private void ShowDynamicUi(BasePlayer player)
+        {
+            if (player == null || !player.IsConnected)
+            {
+                return;
+            }
+
+            DestroyDynamicUi(player);
+
+            var container = new CuiElementContainer();
             container.Add(new CuiPanel
             {
-                Image = { Color = _config.UiColors.InfoPanelColor },
+                Image = { Color = "0 0 0 0" },
                 RectTransform =
                 {
                     AnchorMin = _config.UiPosition.InfoAnchorMin,
@@ -682,43 +832,7 @@ private string GetPng(string key)
                     OffsetMin = _config.UiPosition.InfoOffsetMin,
                     OffsetMax = _config.UiPosition.InfoOffsetMax
                 }
-            }, "Hud", UiMain);
-
-            container.Add(new CuiLabel
-            {
-                Text =
-                {
-                    Text = BuildMoscowTimeText(),
-                    FontSize = _config.UiGeometry.TimeFontSize,
-                    Align = TextAnchor.MiddleLeft,
-                    Color = _config.UiColors.InfoTextColor
-                },
-                RectTransform = { AnchorMin = "0.015 0.5", AnchorMax = "0.22 1" }
-            }, UiMain);
-
-            container.Add(new CuiLabel
-            {
-                Text =
-                {
-                    Text = BuildOnlineText(),
-                    FontSize = _config.UiGeometry.OnlineFontSize,
-                    Align = TextAnchor.MiddleLeft,
-                    Color = _config.UiColors.InfoTextColor
-                },
-                RectTransform = { AnchorMin = "0.225 0.5", AnchorMax = "0.40 1" }
-            }, UiMain);
-
-            container.Add(new CuiLabel
-            {
-                Text =
-                {
-                    Text = BuildServerTimeText(),
-                    FontSize = _config.UiGeometry.TimeFontSize,
-                    Align = TextAnchor.MiddleLeft,
-                    Color = _config.UiColors.InfoTextColor
-                },
-                RectTransform = { AnchorMin = "0.015 0", AnchorMax = "0.40 0.5" }
-            }, UiMain);
+            }, "Hud", UiDynamic);
 
             AddEventTiles(container);
 
@@ -726,48 +840,115 @@ private string GetPng(string key)
         }
 
         private void AddEventTiles(CuiElementContainer container)
+{
+    if (container == null)
+    {
+        return;
+    }
+
+    AddEventTile(
+        container,
+        IsCustomEventActive("HELLTRAIN"),
+        _config.UiPosition.EventTileHelltrainMin,
+        _config.UiPosition.EventTileHelltrainMax,
+        _config.UiIcons.Helltrain.Active,
+        _config.UiIcons.Helltrain.Inactive,
+        "Helltrain");
+
+    AddEventTile(
+        container,
+        IsCustomEventActive("CONVOY"),
+        _config.UiPosition.EventTileConvoyMin,
+        _config.UiPosition.EventTileConvoyMax,
+        _config.UiIcons.Convoy.Active,
+        _config.UiIcons.Convoy.Inactive,
+        "Convoy");
+
+    AddEventTile(
+        container,
+        _cargoShipActive,
+        _config.UiPosition.EventTileCargoMin,
+        _config.UiPosition.EventTileCargoMax,
+        _config.UiIcons.Cargo.Active,
+        _config.UiIcons.Cargo.Inactive,
+        "Cargo");
+
+    AddEventTile(
+        container,
+        _airdropActive,
+        _config.UiPosition.EventTileAirdropMin,
+        _config.UiPosition.EventTileAirdropMax,
+        _config.UiIcons.Airdrop.Active,
+        _config.UiIcons.Airdrop.Inactive,
+        "Airdrop");
+
+    AddEventTile(
+        container,
+        _chinookActive,
+        _config.UiPosition.EventTileChinookMin,
+        _config.UiPosition.EventTileChinookMax,
+        _config.UiIcons.Chinook.Active,
+        _config.UiIcons.Chinook.Inactive,
+        "Chinook");
+
+    AddEventTile(
+        container,
+        _patrolHelicopterActive,
+        _config.UiPosition.EventTileHelitiersMin,
+        _config.UiPosition.EventTileHelitiersMax,
+        _config.UiIcons.Helitiers.Active,
+        _config.UiIcons.Helitiers.Inactive,
+        "Helitiers");
+}
+
+        private void AddEventTile(
+    CuiElementContainer container,
+    bool isActive,
+    string anchorMin,
+    string anchorMax,
+    string activeKey,
+    string inactiveKey,
+    string elementKey)
+{
+    var key = isActive ? activeKey : inactiveKey;
+    var png = GetPng(key);
+
+    var panel = container.Add(new CuiPanel
+    {
+        Image =
         {
-            if (container == null)
-            {
-                return;
-            }
-
-            AddEventTile(container, "HELLTRAIN", IsCustomEventActive("HELLTRAIN"), _config.UiPosition.EventTileHelltrainMin, _config.UiPosition.EventTileHelltrainMax, "Helltrain");
-            AddEventTile(container, "CONVOY", IsCustomEventActive("CONVOY"), _config.UiPosition.EventTileConvoyMin, _config.UiPosition.EventTileConvoyMax, "Convoy");
-            AddEventTile(container, "CARGO", _cargoShipActive, _config.UiPosition.EventTileCargoMin, _config.UiPosition.EventTileCargoMax, "Cargo");
-            AddEventTile(container, "AIRDROP", _airdropActive, _config.UiPosition.EventTileAirdropMin, _config.UiPosition.EventTileAirdropMax, "Airdrop");
-            AddEventTile(container, "CHINOOK", _chinookActive, _config.UiPosition.EventTileChinookMin, _config.UiPosition.EventTileChinookMax, "Chinook");
-            AddEventTile(container, "HELITIERS", _patrolHelicopterActive, _config.UiPosition.EventTileHelitiersMin, _config.UiPosition.EventTileHelitiersMax, "Helitiers");
-        }
-
-        private void AddEventTile(CuiElementContainer container, string label, bool isActive, string anchorMin, string anchorMax, string elementKey)
+            Color = isActive
+                ? _config.UiColors.EventActiveColor
+                : _config.UiColors.EventInactiveColor
+        },
+        RectTransform =
         {
-            var panel = container.Add(new CuiPanel
-            {
-                Image = { Color = isActive ? _config.UiColors.EventActiveColor : _config.UiColors.EventInactiveColor },
-                RectTransform =
-                {
-                    AnchorMin = anchorMin,
-                    AnchorMax = anchorMax
-                }
-            }, UiMain, UiMain + ".Tile." + elementKey);
-
-            container.Add(new CuiLabel
-            {
-                Text =
-                {
-                    Text = label,
-                    FontSize = 10,
-                    Align = TextAnchor.MiddleCenter,
-                    Color = _config.UiColors.EventTextColor
-                },
-                RectTransform =
-                {
-                    AnchorMin = "0 0",
-                    AnchorMax = "1 1"
-                }
-            }, panel);
+            AnchorMin = anchorMin,
+            AnchorMax = anchorMax
         }
+    }, UiDynamic, UiDynamic + ".Tile." + elementKey);
+
+    if (string.IsNullOrWhiteSpace(png))
+        return;
+
+    container.Add(new CuiElement
+    {
+        Parent = panel,
+        Components =
+        {
+            new CuiRawImageComponent
+            {
+                Png = png,
+                Color = "1 1 1 1"
+            },
+            new CuiRectTransformComponent
+{
+    AnchorMin = "0 0",
+    AnchorMax = "1 1"
+}
+        }
+    });
+}
 
         private bool IsCustomEventActive(string eventName)
         {
@@ -872,48 +1053,51 @@ private string GetPng(string key)
             switch (targetIndex)
             {
                 case 0: return "Button";
-                case 1: return "InfoPanel";
-                case 2: return "HelltrainTile";
-                case 3: return "ConvoyTile";
-                case 4: return "CargoTile";
-                case 5: return "AirdropTile";
-                case 6: return "ChinookTile";
-                case 7: return "HelitiersTile";
-                default: return "Button";
+case 1: return "InfoPanel";
+case 2: return "RingBackground";
+case 3: return "HelltrainTile";
+case 4: return "ConvoyTile";
+case 5: return "CargoTile";
+case 6: return "AirdropTile";
+case 7: return "ChinookTile";
+case 8: return "HelitiersTile";
+default: return "Button";
             }
         }
 
         private string GetTargetMin(int targetIndex)
-        {
-            switch (targetIndex)
-            {
-                case 0: return _config.UiPosition.ButtonAnchorMin;
-                case 1: return _config.UiPosition.InfoAnchorMin;
-                case 2: return _config.UiPosition.EventTileHelltrainMin;
-                case 3: return _config.UiPosition.EventTileConvoyMin;
-                case 4: return _config.UiPosition.EventTileCargoMin;
-                case 5: return _config.UiPosition.EventTileAirdropMin;
-                case 6: return _config.UiPosition.EventTileChinookMin;
-                case 7: return _config.UiPosition.EventTileHelitiersMin;
-                default: return _config.UiPosition.ButtonAnchorMin;
-            }
-        }
+{
+    switch (targetIndex)
+    {
+        case 0: return _config.UiPosition.ButtonAnchorMin;
+        case 1: return _config.UiPosition.InfoAnchorMin;
+        case 2: return _config.UiPosition.RingBackgroundAnchorMin;
+        case 3: return _config.UiPosition.EventTileHelltrainMin;
+        case 4: return _config.UiPosition.EventTileConvoyMin;
+        case 5: return _config.UiPosition.EventTileCargoMin;
+        case 6: return _config.UiPosition.EventTileAirdropMin;
+        case 7: return _config.UiPosition.EventTileChinookMin;
+        case 8: return _config.UiPosition.EventTileHelitiersMin;
+        default: return _config.UiPosition.ButtonAnchorMin;
+    }
+}
 
-        private string GetTargetMax(int targetIndex)
-        {
-            switch (targetIndex)
-            {
-                case 0: return _config.UiPosition.ButtonAnchorMax;
-                case 1: return _config.UiPosition.InfoAnchorMax;
-                case 2: return _config.UiPosition.EventTileHelltrainMax;
-                case 3: return _config.UiPosition.EventTileConvoyMax;
-                case 4: return _config.UiPosition.EventTileCargoMax;
-                case 5: return _config.UiPosition.EventTileAirdropMax;
-                case 6: return _config.UiPosition.EventTileChinookMax;
-                case 7: return _config.UiPosition.EventTileHelitiersMax;
-                default: return _config.UiPosition.ButtonAnchorMax;
-            }
-        }
+private string GetTargetMax(int targetIndex)
+{
+    switch (targetIndex)
+    {
+        case 0: return _config.UiPosition.ButtonAnchorMax;
+        case 1: return _config.UiPosition.InfoAnchorMax;
+        case 2: return _config.UiPosition.RingBackgroundAnchorMax;
+        case 3: return _config.UiPosition.EventTileHelltrainMax;
+        case 4: return _config.UiPosition.EventTileConvoyMax;
+        case 5: return _config.UiPosition.EventTileCargoMax;
+        case 6: return _config.UiPosition.EventTileAirdropMax;
+        case 7: return _config.UiPosition.EventTileChinookMax;
+        case 8: return _config.UiPosition.EventTileHelitiersMax;
+        default: return _config.UiPosition.ButtonAnchorMax;
+    }
+}
 
         private void AddEditorButton(CuiElementContainer container, string parent, string text, string min, string max, string command)
         {
@@ -925,16 +1109,26 @@ private string GetPng(string key)
             }, parent);
         }
 
-        private void DestroyPlayerUi(BasePlayer player)
+        private void DestroyStaticUi(BasePlayer player)
         {
             if (player == null)
             {
                 return;
             }
 
-            CuiHelper.DestroyUi(player, UiMain);
-            CuiHelper.DestroyUi(player, UiButton);
-			CuiHelper.DestroyUi(player, UiMainBackground);
+            CuiHelper.DestroyUi(player, UiRingBackground);
+CuiHelper.DestroyUi(player, UiPanelBackground);
+CuiHelper.DestroyUi(player, UiButton);
+        }
+
+        private void DestroyDynamicUi(BasePlayer player)
+        {
+            if (player == null)
+            {
+                return;
+            }
+
+            CuiHelper.DestroyUi(player, UiDynamic);
         }
 
         private void DestroyEditorUi(BasePlayer player)
@@ -971,3 +1165,4 @@ private string GetPng(string key)
         }
     }
 }
+
