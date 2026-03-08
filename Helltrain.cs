@@ -467,6 +467,7 @@ private List<string> _activeHeavyAssignments = null;
 
 
 private readonly Dictionary<ulong, string> _crateTypeName = new Dictionary<ulong, string>(); // netId -> CrateTypeName
+private readonly Dictionary<ulong, ulong> _pmcHackCrateTriggerPlayer = new Dictionary<ulong, ulong>(); // crate netId -> player userId
 
 private const string PMC_HACK_CRATE_LOOT_KEY = "CratePMCHACKS_C";
 private const float PMC_HACK_CRATE_HACK_SECONDS = 300f;
@@ -546,12 +547,20 @@ private void CancelPmcHackExplosionTimers()
     }
 
     _explosionTimerArmedOnce = false;
+    _pmcHackCrateTriggerPlayer.Clear();
 }
 
 private void ArmPmcHackExplosionFlow(HackableLockedCrate crate, BasePlayer triggerPlayer)
 {
     if (!IsPmcHackCrate(crate)) return;
     if (_explosionTimerArmedOnce) return;
+
+    if (triggerPlayer == null && crate != null && crate.net != null)
+    {
+        ulong rememberedUserId;
+        if (_pmcHackCrateTriggerPlayer.TryGetValue(crate.net.ID.Value, out rememberedUserId) && rememberedUserId != 0UL)
+            triggerPlayer = BasePlayer.FindByID(rememberedUserId) ?? BasePlayer.FindSleeping(rememberedUserId);
+    }
 
     if (triggerPlayer == null && crate != null)
     {
@@ -1880,8 +1889,19 @@ if (_spawnedCars != null && _spawnedCars.Count > 0)
     return null;
 }
 
+private object CanHackCrate(BasePlayer player, HackableLockedCrate crate)
+{
+    if (player != null && crate != null && crate.net != null && IsPmcHackCrate(crate))
+        _pmcHackCrateTriggerPlayer[crate.net.ID.Value] = player.userID;
+
+    return null;
+}
+
 private void OnCrateHack(HackableLockedCrate crate, BasePlayer player)
 {
+    if (player != null && crate != null && crate.net != null && IsPmcHackCrate(crate))
+        _pmcHackCrateTriggerPlayer[crate.net.ID.Value] = player.userID;
+
     EnsurePmcHackCrateTimer(crate, "start_hack");
     ArmPmcHackExplosionFlow(crate, player);
 
