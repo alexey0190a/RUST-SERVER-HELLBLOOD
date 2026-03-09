@@ -14,7 +14,9 @@ namespace Oxide.Plugins
     public class RailSplineScanner : RustPlugin
     {
         private const string DataFolder = "RailSplineScanner";
-        private const float NodeMergeDistance = 6f;
+        private const float NodeMergeDistance = 9f;
+        private const float NodeLinkDistance = 18f;
+        private const float SwitchBranchMinAngle = 35f;
 
         private PluginConfig _config;
         private ScanSnapshot _lastScan;
@@ -47,9 +49,8 @@ namespace Oxide.Plugins
         {
             public BaseEntity Entity;
             public string Prefab;
-            public Vector3 Start;
-            public Vector3 End;
-            public float Length;
+            public Vector3 Position;
+            public Vector3 Forward;
             public bool IsUnderground;
         }
 
@@ -235,23 +236,12 @@ namespace Oxide.Plugins
                 if (!LooksLikeRail(prefab))
                     continue;
 
-                var center = entity.transform.position;
-                var size = entity.bounds.size;
-                var halfLen = Mathf.Max(size.x, size.z) * 0.5f;
-                if (halfLen < 1f)
-                    halfLen = 8f;
-
-                var direction = entity.transform.forward;
-                var start = center - direction * halfLen;
-                var end = center + direction * halfLen;
-
                 var segment = new RailSegment
                 {
                     Entity = entity,
                     Prefab = prefab,
-                    Start = start,
-                    End = end,
-                    Length = Mathf.Max(Vector3.Distance(start, end), 1f),
+                    Position = entity.transform.position,
+                    Forward = entity.transform.forward,
                     IsUnderground = IsUndergroundRail(entity, prefab)
                 };
 
@@ -266,21 +256,48 @@ namespace Oxide.Plugins
         private List<Corridor> BuildCorridors(List<RailSegment> segments)
         {
             var nodes = new List<Vector3>();
-            var segmentNodeA = new Dictionary<int, int>();
-            var segmentNodeB = new Dictionary<int, int>();
             var adjacency = new Dictionary<int, List<int>>();
+            var edges = new List<Tuple<int, int, float>>();
 
             for (var i = 0; i < segments.Count; i++)
             {
-                var a = GetOrCreateNode(segments[i].Start, nodes);
-                var b = GetOrCreateNode(segments[i].End, nodes);
-                segmentNodeA[i] = a;
-                segmentNodeB[i] = b;
+                var nodeId = GetOrCreateNode(segments[i].Position, nodes, NodeMergeDistance);
+                if (!adjacency.ContainsKey(nodeId)) adjacency[nodeId] = new List<int>();
+            }
 
-                if (!adjacency.ContainsKey(a)) adjacency[a] = new List<int>();
-                if (!adjacency.ContainsKey(b)) adjacency[b] = new List<int>();
-                adjacency[a].Add(i);
-                adjacency[b].Add(i);
+            var edgeIndexByKey = new Dictionary<string, int>();
+
+            for (var i = 0; i < nodes.Count; i++)
+            {
+                var nearby = new List<int>();
+                for (var j = 0; j < nodes.Count; j++)
+                {
+                    if (i == j)
+                        continue;
+
+                    var dist = Vector3.Distance(nodes[i], nodes[j]);
+                    if (dist > NodeLinkDistance || dist < 0.5f)
+                        continue;
+
+                    nearby.Add(j);
+                }
+
+                foreach (var j in nearby.OrderBy(n => Vector3.Distance(nodes[i], nodes[n])).Take(4))
+                {
+                    var a = Mathf.Min(i, j);
+                    var b = Mathf.Max(i, j);
+                    var key = a + ":" + b;
+                    if (edgeIndexByKey.ContainsKey(key))
+                        continue;
+
+                    var edgeId = edges.Count;
+                    var length = Vector3.Distance(nodes[a], nodes[b]);
+                    edges.Add(new Tuple<int, int, float>(a, b, length));
+                    edgeIndexByKey[key] = edgeId;
+
+                    adjacency[a].Add(edgeId);
+                    adjacency[b].Add(edgeId);
+                }
             }
 
             var consumedEdges = new HashSet<int>();
@@ -288,36 +305,42 @@ namespace Oxide.Plugins
 
             foreach (var node in adjacency.Keys.ToList())
             {
-                if (adjacency[node].Count == 2)
+                var isBranch = IsBranchNode(node, adjacency, nodes, edges);
+                if (adjacency[node].Count == 2 && !isBranch)
                     continue;
 
                 foreach (var edge in adjacency[node])
                 {
                     if (consumedEdges.Contains(edge))
                         continue;
-                    corridors.Add(TraceCorridor(node, edge, segments, segmentNodeA, segmentNodeB, adjacency, consumedEdges, nodes));
+                    corridors.Add(TraceCorridor(node, edge, edges, adjacency, consumedEdges, nodes));
                 }
             }
 
-            for (var i = 0; i < segments.Count; i++)
+            for (var i = 0; i < edges.Count; i++)
             {
                 if (consumedEdges.Contains(i))
                     continue;
 
-                var startNode = segmentNodeA[i];
-                corridors.Add(TraceCorridor(startNode, i, segments, segmentNodeA, segmentNodeB, adjacency, consumedEdges, nodes));
+                var startNode = edges[i].Item1;
+                corridors.Add(TraceCorridor(startNode, i, edges, adjacency, consumedEdges, nodes));
             }
 
+            DebugLog($"Collected rail pieces: {segments.Count}");
+            DebugLog($"Merged nodes: {nodes.Count}");
             DebugLog($"Built corridors: {corridors.Count}");
+            if (corridors.Count > 0)
+            {
+                var lengths = corridors.Select(c => c.Length).ToList();
+                DebugLog($"Corridor length stats => min={lengths.Min():0.0}m avg={lengths.Average():0.0}m max={lengths.Max():0.0}m");
+            }
             return corridors;
         }
 
         private Corridor TraceCorridor(
             int startNode,
             int startEdge,
-            List<RailSegment> segments,
-            Dictionary<int, int> segmentNodeA,
-            Dictionary<int, int> segmentNodeB,
+            List<Tuple<int, int, float>> edges,
             Dictionary<int, List<int>> adjacency,
             HashSet<int> consumedEdges,
             List<Vector3> nodes)
@@ -337,16 +360,16 @@ namespace Oxide.Plugins
                 consumedEdges.Add(edge);
                 corridor.SegmentIds.Add(edge);
 
-                var a = segmentNodeA[edge];
-                var b = segmentNodeB[edge];
+                var a = edges[edge].Item1;
+                var b = edges[edge].Item2;
                 var nextNode = a == currentNode ? b : a;
                 corridor.NodePath.Add(nextNode);
 
                 var nodeDegree = adjacency[nextNode].Count;
-                if (nodeDegree > 2)
+                if (IsBranchNode(nextNode, adjacency, nodes, edges))
                     corridor.HasSwitch = true;
 
-                if (nodeDegree != 2)
+                if (nodeDegree != 2 || IsBranchNode(nextNode, adjacency, nodes, edges))
                     break;
 
                 var nextEdge = -1;
@@ -365,8 +388,8 @@ namespace Oxide.Plugins
                 edge = nextEdge;
             }
 
-            corridor.Length = corridor.SegmentIds.Sum(id => segments[id].Length);
-            corridor.Underground = corridor.SegmentIds.Any(id => segments[id].IsUnderground);
+            corridor.Length = corridor.SegmentIds.Sum(id => edges[id].Item3);
+            corridor.Underground = false;
             corridor.StartPos = nodes[corridor.NodePath.First()];
             corridor.EndPos = nodes[corridor.NodePath.Last()];
             corridor.CenterPos = (corridor.StartPos + corridor.EndPos) * 0.5f;
@@ -609,16 +632,56 @@ namespace Oxide.Plugins
             return count;
         }
 
-        private int GetOrCreateNode(Vector3 position, List<Vector3> nodes)
+        private int GetOrCreateNode(Vector3 position, List<Vector3> nodes, float mergeDistance)
         {
             for (var i = 0; i < nodes.Count; i++)
             {
-                if (Vector3.Distance(nodes[i], position) <= NodeMergeDistance)
+                if (Vector3.Distance(nodes[i], position) <= mergeDistance)
                     return i;
             }
 
             nodes.Add(position);
             return nodes.Count - 1;
+        }
+
+        private bool IsBranchNode(int node, Dictionary<int, List<int>> adjacency, List<Vector3> nodes, List<Tuple<int, int, float>> edges)
+        {
+            if (!adjacency.ContainsKey(node))
+                return false;
+
+            var connectedEdges = adjacency[node];
+            if (connectedEdges.Count < 3)
+                return false;
+
+            var directions = new List<Vector3>();
+
+            foreach (var edgeId in connectedEdges)
+            {
+                var linkedNode = edges[edgeId].Item1 == node ? edges[edgeId].Item2 : edges[edgeId].Item1;
+
+                if (linkedNode < 0)
+                    continue;
+
+                var dir = (nodes[linkedNode] - nodes[node]).normalized;
+                if (dir.sqrMagnitude > 0.001f)
+                    directions.Add(dir);
+            }
+
+            if (directions.Count < 3)
+                return false;
+
+            var maxAngle = 0f;
+            for (var i = 0; i < directions.Count; i++)
+            {
+                for (var j = i + 1; j < directions.Count; j++)
+                {
+                    var angle = Vector3.Angle(directions[i], directions[j]);
+                    if (angle > maxAngle)
+                        maxAngle = angle;
+                }
+            }
+
+            return maxAngle >= SwitchBranchMinAngle;
         }
 
         private bool LooksLikeRail(string prefab)
