@@ -29,8 +29,14 @@ namespace Oxide.Plugins
         private static Convoy _ins;
         private EventController _eventController;
         [PluginReference] Plugin ArmoredTrain, NpcSpawn, GUIAnnouncements, DiscordMessages, Notify, PveMode, Economics, ServerRewards, IQEconomic, DynamicPVP, AlphaLoot, CustomLoot, Loottable;
+        [PluginReference] private Plugin HellbloodHud;
         private ProtectionProperties _protection;
         private EventHeli _eventHeli;
+
+        private void SetHudState(bool isActive)
+        {
+            HellbloodHud?.Call("API_SetCustomEventState", "CONVOY", isActive);
+        }
 
         private readonly HashSet<string> _subscribeMethods = new HashSet<string>
         {
@@ -145,6 +151,7 @@ namespace Oxide.Plugins
 
         private void Unload()
         {
+            SetHudState(false);
             EventLauncher.StopEvent(true);
             PathManager.OnPluginUnloaded();
             _ins = null;
@@ -1583,6 +1590,7 @@ namespace Oxide.Plugins
                 GameObject gameObject = new GameObject();
                 _ins._eventController = gameObject.AddComponent<EventController>();
                 _ins._eventController.Init(eventConfig);
+                _ins.SetHudState(true);
 
                 if (_activeFixedScheduleWindowEndUtc != null)
                 {
@@ -1600,6 +1608,7 @@ namespace Oxide.Plugins
 
             public static void StopEvent(bool isPluginUnloadingOrFailed = false)
             {
+                _ins?.SetHudState(false);
                 if (IsEventActive())
                 {
                     _ins.Unsubscribes();
