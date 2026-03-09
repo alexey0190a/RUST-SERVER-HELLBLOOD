@@ -14,8 +14,9 @@ namespace Oxide.Plugins
     public class RailSplineScanner : RustPlugin
     {
         private const string DataFolder = "RailSplineScanner";
-        private const float NodeMergeDistance = 9f;
-        private const float NodeLinkDistance = 18f;
+        private const float NodeMergeDistanceXZ = 9f;
+        private const float NodeLinkDistanceXZ = 18f;
+        private const float MaxHeightDeltaForContinuity = 8f;
         private const float SwitchBranchMinAngle = 35f;
 
         private PluginConfig _config;
@@ -50,7 +51,6 @@ namespace Oxide.Plugins
             public BaseEntity Entity;
             public string Prefab;
             public Vector3 Position;
-            public Vector3 Forward;
             public bool IsUnderground;
         }
 
@@ -233,7 +233,7 @@ namespace Oxide.Plugins
                     continue;
 
                 var prefab = entity.PrefabName?.ToLowerInvariant() ?? string.Empty;
-                if (!LooksLikeRail(prefab))
+                if (!LooksLikeRail(prefab) || !IsLikelyRailPiecePrefab(prefab))
                     continue;
 
                 var segment = new RailSegment
@@ -241,7 +241,6 @@ namespace Oxide.Plugins
                     Entity = entity,
                     Prefab = prefab,
                     Position = entity.transform.position,
-                    Forward = entity.transform.forward,
                     IsUnderground = IsUndergroundRail(entity, prefab)
                 };
 
@@ -261,7 +260,7 @@ namespace Oxide.Plugins
 
             for (var i = 0; i < segments.Count; i++)
             {
-                var nodeId = GetOrCreateNode(segments[i].Position, nodes, NodeMergeDistance);
+                var nodeId = GetOrCreateNode(segments[i].Position, nodes, NodeMergeDistanceXZ, MaxHeightDeltaForContinuity);
                 if (!adjacency.ContainsKey(nodeId)) adjacency[nodeId] = new List<int>();
             }
 
@@ -275,14 +274,15 @@ namespace Oxide.Plugins
                     if (i == j)
                         continue;
 
-                    var dist = Vector3.Distance(nodes[i], nodes[j]);
-                    if (dist > NodeLinkDistance || dist < 0.5f)
+                    var distXZ = HorizontalDistance(nodes[i], nodes[j]);
+                    var deltaY = HeightDelta(nodes[i], nodes[j]);
+                    if (distXZ > NodeLinkDistanceXZ || distXZ < 0.5f || deltaY > MaxHeightDeltaForContinuity)
                         continue;
 
                     nearby.Add(j);
                 }
 
-                foreach (var j in nearby.OrderBy(n => Vector3.Distance(nodes[i], nodes[n])).Take(4))
+                foreach (var j in nearby.OrderBy(n => HorizontalDistance(nodes[i], nodes[n])).Take(4))
                 {
                     var a = Mathf.Min(i, j);
                     var b = Mathf.Max(i, j);
@@ -291,7 +291,7 @@ namespace Oxide.Plugins
                         continue;
 
                     var edgeId = edges.Count;
-                    var length = Vector3.Distance(nodes[a], nodes[b]);
+                    var length = HorizontalDistance(nodes[a], nodes[b]);
                     edges.Add(new Tuple<int, int, float>(a, b, length));
                     edgeIndexByKey[key] = edgeId;
 
@@ -632,16 +632,28 @@ namespace Oxide.Plugins
             return count;
         }
 
-        private int GetOrCreateNode(Vector3 position, List<Vector3> nodes, float mergeDistance)
+        private int GetOrCreateNode(Vector3 position, List<Vector3> nodes, float mergeDistanceXZ, float maxHeightDelta)
         {
             for (var i = 0; i < nodes.Count; i++)
             {
-                if (Vector3.Distance(nodes[i], position) <= mergeDistance)
+                if (HorizontalDistance(nodes[i], position) <= mergeDistanceXZ && HeightDelta(nodes[i], position) <= maxHeightDelta)
                     return i;
             }
 
             nodes.Add(position);
             return nodes.Count - 1;
+        }
+
+        private float HorizontalDistance(Vector3 a, Vector3 b)
+        {
+            var dx = a.x - b.x;
+            var dz = a.z - b.z;
+            return Mathf.Sqrt(dx * dx + dz * dz);
+        }
+
+        private float HeightDelta(Vector3 a, Vector3 b)
+        {
+            return Mathf.Abs(a.y - b.y);
         }
 
         private bool IsBranchNode(int node, Dictionary<int, List<int>> adjacency, List<Vector3> nodes, List<Tuple<int, int, float>> edges)
@@ -693,6 +705,20 @@ namespace Oxide.Plugins
                 return false;
 
             return prefab.Contains("rail") || prefab.Contains("traintrack") || prefab.Contains("train_track") || prefab.Contains("track");
+        }
+
+        private bool IsLikelyRailPiecePrefab(string prefab)
+        {
+            if (string.IsNullOrEmpty(prefab))
+                return false;
+
+            if (prefab.Contains("train_track") || prefab.Contains("traintrack"))
+                return true;
+
+            if (prefab.Contains("railway") && (prefab.Contains("track") || prefab.Contains("spline") || prefab.Contains("junction") || prefab.Contains("switch")))
+                return true;
+
+            return false;
         }
 
         private bool IsUndergroundRail(BaseEntity entity, string prefab)
