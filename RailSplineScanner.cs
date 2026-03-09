@@ -379,8 +379,8 @@ namespace Oxide.Plugins
         {
             var snapshot = new ScanSnapshot
             {
-                MapSeed = World.Seed,
-                MapSize = World.Size,
+                MapSeed = Convert.ToUInt32(World.Seed),
+                MapSize = Convert.ToInt32(World.Size),
                 ScannedAtUtc = DateTime.UtcNow.ToString("o", CultureInfo.InvariantCulture),
                 Summary = new ScanSummary()
             };
