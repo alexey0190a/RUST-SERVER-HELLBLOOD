@@ -84,7 +84,7 @@ namespace Oxide.Plugins
 
         private class ScanSnapshot
         {
-            public int MapSeed;
+            public uint MapSeed;
             public int MapSize;
             public string ScannedAtUtc;
             public ScanSummary Summary;
