@@ -143,14 +143,14 @@ namespace Oxide.Plugins
         {
             if (player != null && !player.IsAdmin)
             {
-                SendReply(player, "You must be admin to use this command.");
+                Reply(player, "Эта команда доступна только администратору.");
                 return;
             }
 
             if (args.Length == 0)
             {
                 RunFullScan();
-                SendReply(player, BuildSummaryText(_lastScan));
+                Reply(player, BuildSummaryText(_lastScan));
                 return;
             }
 
@@ -160,10 +160,13 @@ namespace Oxide.Plugins
                 case "list":
                     ReplyList(player);
                     break;
+                case "help":
+                    ReplyHelp(player);
+                    break;
                 case "show":
                     if (args.Length < 2)
                     {
-                        SendReply(player, "Usage: /scanspline show <grid>");
+                        Reply(player, "Использование: /scanspline show <grid>");
                         return;
                     }
                     ReplyShowGrid(player, args[1].ToUpperInvariant());
@@ -171,7 +174,7 @@ namespace Oxide.Plugins
                 case "showid":
                     if (args.Length < 2)
                     {
-                        SendReply(player, "Usage: /scanspline showid <candidateId>");
+                        Reply(player, "Использование: /scanspline showid <candidateId>");
                         return;
                     }
                     ReplyShowId(player, args[1]);
@@ -179,20 +182,34 @@ namespace Oxide.Plugins
                 case "export":
                     if (_lastScan == null)
                     {
-                        SendReply(player, "No scan in memory. Run /scanspline first.");
+                        Reply(player, "В памяти нет результатов. Сначала выполните /scanspline.");
                         return;
                     }
                     ExportSnapshot(_lastScan);
-                    SendReply(player, "Exported current in-memory scan to oxide/data.");
+                    Reply(player, "Текущий кэш скана повторно экспортирован в oxide/data.");
                     break;
                 case "clear":
                     _lastScan = null;
-                    SendReply(player, "In-memory scan cache cleared.");
+                    Reply(player, "Кэш скана в памяти очищен.");
                     break;
                 default:
-                    SendReply(player, "Commands: /scanspline, /scanspline list, /scanspline show <grid>, /scanspline showid <candidateId>, /scanspline export, /scanspline clear");
+                    ReplyHelp(player);
                     break;
             }
+        }
+
+        private void ReplyHelp(BasePlayer player)
+        {
+            Reply(player, "RailSplineScanner: список команд");
+            Reply(player, "/scanspline - полный скан сети рельс и экспорт");
+            Reply(player, "/scanspline list - компактный список всех кандидатов");
+            Reply(player, "/scanspline show <grid> - список кандидатов по указанной сетке");
+            Reply(player, "/scanspline showid <candidateId> - полная информация по кандидату");
+            Reply(player, "/scanspline export - повторный экспорт последнего скана");
+            Reply(player, "/scanspline clear - очистка кэша скана в памяти");
+            Reply(player, "/scanspline help - показать эту справку");
+            Reply(player, "Консольные команды: отсутствуют");
+            Reply(player, "Права (permissions): отсутствуют, используется проверка admin");
         }
 
         private void RunFullScan()
@@ -495,15 +512,15 @@ namespace Oxide.Plugins
         {
             if (_lastScan == null)
             {
-                SendReply(player, "No scan in memory. Run /scanspline first.");
+                Reply(player, "В памяти нет результатов. Сначала выполните /scanspline.");
                 return;
             }
 
-            SendReply(player, $"Candidates: {_lastScan.Summary.TotalCandidates}");
+            Reply(player, $"Кандидатов: {_lastScan.Summary.TotalCandidates}");
             foreach (var candidate in _lastScan.AllCandidates.OrderBy(c => c.Grid).ThenBy(c => c.CandidateId))
             {
                 var flags = candidate.ReasonFlags.Count == 0 ? "-" : string.Join(",", candidate.ReasonFlags);
-                SendReply(player, $"{candidate.Grid} | {candidate.CandidateId} | {candidate.LengthMeters}m | {candidate.Status} | {flags}");
+                Reply(player, $"{candidate.Grid} | {candidate.CandidateId} | {candidate.LengthMeters}m | {candidate.Status} | {flags}");
             }
         }
 
@@ -511,21 +528,21 @@ namespace Oxide.Plugins
         {
             if (_lastScan == null)
             {
-                SendReply(player, "No scan in memory. Run /scanspline first.");
+                Reply(player, "В памяти нет результатов. Сначала выполните /scanspline.");
                 return;
             }
 
             if (!_lastScan.Grids.TryGetValue(grid, out var list) || list.Count == 0)
             {
-                SendReply(player, $"No candidates found in grid {grid}.");
+                Reply(player, $"В сетке {grid} кандидаты не найдены.");
                 return;
             }
 
-            SendReply(player, $"Grid {grid}: {list.Count} candidate(s)");
+            Reply(player, $"Сетка {grid}: {list.Count} кандидат(ов)");
             foreach (var candidate in list.OrderBy(c => c.CandidateId))
             {
                 var flags = candidate.ReasonFlags.Count == 0 ? "-" : string.Join(",", candidate.ReasonFlags);
-                SendReply(player, $"{candidate.CandidateId} | {candidate.LengthMeters}m | {candidate.Status} | {flags}");
+                Reply(player, $"{candidate.CandidateId} | {candidate.LengthMeters}m | {candidate.Status} | {flags}");
             }
         }
 
@@ -533,35 +550,46 @@ namespace Oxide.Plugins
         {
             if (_lastScan == null)
             {
-                SendReply(player, "No scan in memory. Run /scanspline first.");
+                Reply(player, "В памяти нет результатов. Сначала выполните /scanspline.");
                 return;
             }
 
             var candidate = _lastScan.AllCandidates.FirstOrDefault(c => c.CandidateId.Equals(candidateId, StringComparison.OrdinalIgnoreCase));
             if (candidate == null)
             {
-                SendReply(player, $"Candidate {candidateId} not found.");
+                Reply(player, $"Кандидат {candidateId} не найден.");
                 return;
             }
 
             var flags = candidate.ReasonFlags.Count == 0 ? "-" : string.Join(",", candidate.ReasonFlags);
-            SendReply(player, $"CandidateId: {candidate.CandidateId}");
-            SendReply(player, $"Grid: {candidate.Grid}");
-            SendReply(player, $"Status: {candidate.Status}");
-            SendReply(player, $"Safe: {candidate.Safe}");
-            SendReply(player, $"LengthMeters: {candidate.LengthMeters}");
-            SendReply(player, $"SwitchCount: {candidate.SwitchCount}");
-            SendReply(player, $"NearbyTrainSpawnCount: {candidate.NearbyTrainSpawnCount}");
-            SendReply(player, $"NearbyTrainEntityCount: {candidate.NearbyTrainEntityCount}");
-            SendReply(player, $"ReasonFlags: {flags}");
-            SendReply(player, $"StartPos: {candidate.StartPos.x},{candidate.StartPos.y},{candidate.StartPos.z}");
-            SendReply(player, $"EndPos: {candidate.EndPos.x},{candidate.EndPos.y},{candidate.EndPos.z}");
-            SendReply(player, $"CenterPos: {candidate.CenterPos.x},{candidate.CenterPos.y},{candidate.CenterPos.z}");
+            Reply(player, $"CandidateId: {candidate.CandidateId}");
+            Reply(player, $"Grid: {candidate.Grid}");
+            Reply(player, $"Status: {candidate.Status}");
+            Reply(player, $"Safe: {candidate.Safe}");
+            Reply(player, $"LengthMeters: {candidate.LengthMeters}");
+            Reply(player, $"SwitchCount: {candidate.SwitchCount}");
+            Reply(player, $"NearbyTrainSpawnCount: {candidate.NearbyTrainSpawnCount}");
+            Reply(player, $"NearbyTrainEntityCount: {candidate.NearbyTrainEntityCount}");
+            Reply(player, $"ReasonFlags: {flags}");
+            Reply(player, $"StartPos: {candidate.StartPos.x},{candidate.StartPos.y},{candidate.StartPos.z}");
+            Reply(player, $"EndPos: {candidate.EndPos.x},{candidate.EndPos.y},{candidate.EndPos.z}");
+            Reply(player, $"CenterPos: {candidate.CenterPos.x},{candidate.CenterPos.y},{candidate.CenterPos.z}");
         }
 
         private string BuildSummaryText(ScanSnapshot snapshot)
         {
-            return $"Scan complete. total candidates={snapshot.Summary.TotalCandidates}, safe={snapshot.Summary.SafeCount}, unsafe={snapshot.Summary.UnsafeCount}, candidate_with_cleanup={snapshot.Summary.CandidateWithCleanupCount}";
+            return $"Скан завершен. total candidates={snapshot.Summary.TotalCandidates}, safe={snapshot.Summary.SafeCount}, unsafe={snapshot.Summary.UnsafeCount}, candidate_with_cleanup={snapshot.Summary.CandidateWithCleanupCount}";
+        }
+
+        private void Reply(BasePlayer player, string message)
+        {
+            if (player == null)
+            {
+                Puts(message);
+                return;
+            }
+
+            SendReply(player, message);
         }
 
         private int CountNearby(Vector3 center, float radius, Func<BaseEntity, bool> filter)
