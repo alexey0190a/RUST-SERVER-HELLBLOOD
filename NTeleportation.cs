@@ -37,7 +37,11 @@ namespace Oxide.Plugins
         private readonly string[] emptyArg = Array.Empty<string>();
         private const string PermAdmin = "nteleportation.admin";
         private const string PermRestrictions = "nteleportation.norestrictions";
-        private const string ConfigDefaultPermVip = "nteleportation.vip";
+        private const string ConfigDefaultPermAdmin = "nteleportation.admin";
+        private const string ConfigDefaultPermDefault = "nteleportation.default";
+        private const string ConfigDefaultPermWarlock = "nteleportation.warlock";
+        private const string ConfigDefaultPermLucifer = "nteleportation.lucifer";
+        private const string ConfigDefaultPermDaemon = "nteleportation.daemon";
         private const string PermHome = "nteleportation.home";
         private const string PermWipeHomes = "nteleportation.wipehomes";
         private const string PermCraftHome = "nteleportation.crafthome";
@@ -125,6 +129,15 @@ namespace Oxide.Plugins
                 return v.x <= extents.x && v.x > -extents.x && v.y <= extents.y && v.y > -extents.y && v.z <= extents.z && v.z > -extents.z;
             }
         }
+
+        private static Dictionary<string, int> CreateDefaultVipPermissions(int value) => new()
+        {
+            { ConfigDefaultPermAdmin, value },
+            { ConfigDefaultPermDefault, value },
+            { ConfigDefaultPermWarlock, value },
+            { ConfigDefaultPermLucifer, value },
+            { ConfigDefaultPermDaemon, value }
+        };
 
         #region Configuration
 
@@ -358,7 +371,7 @@ namespace Oxide.Plugins
             public string ChatName = "<color=red>Teleportation</color> \n\n";
 
             [JsonProperty(PropertyName = "Chat Steam64ID")]
-            public ulong ChatID = 76561199056025689;
+            public ulong ChatID = 76561198109864812;
 
             [JsonProperty(PropertyName = "Check Boundaries On Teleport X Y Z")]
             public bool CheckBoundaries = true;
@@ -483,7 +496,7 @@ namespace Oxide.Plugins
         public class TPBSettings
         {
             [JsonProperty(PropertyName = "VIP Countdowns", ObjectCreationHandling = ObjectCreationHandling.Replace)]
-            public Dictionary<string, int> Countdowns = new() { { ConfigDefaultPermVip, 0 } };
+            public Dictionary<string, int> Countdowns = CreateDefaultVipPermissions(0);
 
             [JsonProperty("Countdown")]
             public int Countdown = 0;
@@ -519,7 +532,7 @@ namespace Oxide.Plugins
             public int HomesLimit = 2;
 
             [JsonProperty(PropertyName = "VIP Homes Limits", ObjectCreationHandling = ObjectCreationHandling.Replace)]
-            public Dictionary<string, int> VIPHomesLimits = new() { { ConfigDefaultPermVip, 5 } };
+            public Dictionary<string, int> VIPHomesLimits = CreateDefaultVipPermissions(5);
 
             [JsonProperty(PropertyName = "Allow Sethome At Specific Monuments", ObjectCreationHandling = ObjectCreationHandling.Replace)]
             public List<string> AllowedMonuments = new() { "HQM Quarry", "Stone Quarry", "Sulfur Quarry", "Ice Lake", "Wild Swamp" };
@@ -543,13 +556,13 @@ namespace Oxide.Plugins
             public int DailyLimit = 5;
 
             [JsonProperty(PropertyName = "VIP Daily Limits", ObjectCreationHandling = ObjectCreationHandling.Replace)]
-            public Dictionary<string, int> VIPDailyLimits = new() { { ConfigDefaultPermVip, 5 } };
+            public Dictionary<string, int> VIPDailyLimits = CreateDefaultVipPermissions(5);
 
             [JsonProperty(PropertyName = "VIP Cooldowns", ObjectCreationHandling = ObjectCreationHandling.Replace)]
-            public Dictionary<string, int> VIPCooldowns = new() { { ConfigDefaultPermVip, 5 } };
+            public Dictionary<string, int> VIPCooldowns = CreateDefaultVipPermissions(5);
 
             [JsonProperty(PropertyName = "VIP Countdowns", ObjectCreationHandling = ObjectCreationHandling.Replace)]
-            public Dictionary<string, int> VIPCountdowns = new() { { ConfigDefaultPermVip, 5 } };
+            public Dictionary<string, int> VIPCountdowns = CreateDefaultVipPermissions(5);
 
             [JsonProperty(PropertyName = "Location Radius")]
             public int LocationRadius = 25;
@@ -695,13 +708,13 @@ namespace Oxide.Plugins
             public int DailyLimit = 5;
 
             [JsonProperty(PropertyName = "VIP Daily Limits", ObjectCreationHandling = ObjectCreationHandling.Replace)]
-            public Dictionary<string, int> VIPDailyLimits = new() { { ConfigDefaultPermVip, 5 } };
+            public Dictionary<string, int> VIPDailyLimits = CreateDefaultVipPermissions(5);
 
             [JsonProperty(PropertyName = "VIP Cooldowns", ObjectCreationHandling = ObjectCreationHandling.Replace)]
-            public Dictionary<string, int> VIPCooldowns = new() { { ConfigDefaultPermVip, 5 } };
+            public Dictionary<string, int> VIPCooldowns = CreateDefaultVipPermissions(5);
 
             [JsonProperty(PropertyName = "VIP Countdowns", ObjectCreationHandling = ObjectCreationHandling.Replace)]
-            public Dictionary<string, int> VIPCountdowns = new() { { ConfigDefaultPermVip, 5 } };
+            public Dictionary<string, int> VIPCountdowns = CreateDefaultVipPermissions(5);
 
             [JsonProperty(PropertyName = "Enable Request UI")]
             public bool UI;
@@ -767,13 +780,13 @@ namespace Oxide.Plugins
             public int DailyLimit = 5;
 
             [JsonProperty(PropertyName = "VIP Daily Limits", ObjectCreationHandling = ObjectCreationHandling.Replace)]
-            public Dictionary<string, int> VIPDailyLimits = new() { { ConfigDefaultPermVip, 5 } };
+            public Dictionary<string, int> VIPDailyLimits = CreateDefaultVipPermissions(5);
 
             [JsonProperty(PropertyName = "VIP Cooldowns", ObjectCreationHandling = ObjectCreationHandling.Replace)]
-            public Dictionary<string, int> VIPCooldowns = new() { { ConfigDefaultPermVip, 5 } };
+            public Dictionary<string, int> VIPCooldowns = CreateDefaultVipPermissions(5);
 
             [JsonProperty(PropertyName = "VIP Countdowns", ObjectCreationHandling = ObjectCreationHandling.Replace)]
-            public Dictionary<string, int> VIPCountdowns = new() { { ConfigDefaultPermVip, 5 } };
+            public Dictionary<string, int> VIPCountdowns = CreateDefaultVipPermissions(5);
 
             [JsonProperty(PropertyName = "Location")]
             public Vector3 Location = Vector3.zero;
