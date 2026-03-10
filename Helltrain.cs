@@ -3202,8 +3202,6 @@ private void StartRespawnTimer(float? overrideMinutes = null)
                 {
                     Puts("[Helltrain] FixedSchedule: слот пропущен (ивент уже активен).");
                 }
-
-                StartRespawnTimer();
             });
 
             string minutesWord = GetMinutesWord((int)minutes);
