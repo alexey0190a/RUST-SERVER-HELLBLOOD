@@ -818,9 +818,20 @@ rep = timer.Every(0.1f, () => {
         {
             List<string> pool;
             if (config.Autopilot.AllowedTiers != null && config.Autopilot.AllowedTiers.Count > 0)
-                pool = config.Autopilot.AllowedTiers;
+            {
+                pool = new List<string>();
+                var seen = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
+                foreach (var rawId in config.Autopilot.AllowedTiers)
+                {
+                    var canonical = GetTier(rawId)?.Id;
+                    if (string.IsNullOrEmpty(canonical)) continue;
+                    if (seen.Add(canonical)) pool.Add(canonical);
+                }
+            }
             else
+            {
                 pool = config.Tiers.Select(t => t.Id).ToList();
+            }
 
             if (pool == null || pool.Count == 0)
                 return GetTier(config.Autopilot.FallbackTier);
