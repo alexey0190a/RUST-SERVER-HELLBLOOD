@@ -507,7 +507,13 @@ namespace Oxide.Plugins
                     }
                 }
 
-                if (bestId != 0UL && bestDist <= 80f)
+                bool crateSpawn = s == "heli_crate";
+                bool shouldBind = bestId != 0UL && (crateSpawn || bestDist <= 80f);
+
+                // Для ящиков не используем жёсткий радиус: часть версий Rust может
+                // редиректить отдельный crate далеко от точки смерти, из-за чего
+                // игроки видят "на один ящик меньше".
+                if (shouldBind)
                 {
                     // ent.limitNetworking disabled for crash spawns
 
@@ -522,7 +528,7 @@ ent.transform.position = drop;
 // Anti-redirect: keep crash spawns at death point for a short window
 double until = 0;
 antiRedirectUntil.TryGetValue(bestId, out until);
-bool crateNow = (s == "heli_crate");
+bool crateNow = crateSpawn;
 if (until > 0 && CurrentTime() <= until)
 {
     int ticks = 0;
