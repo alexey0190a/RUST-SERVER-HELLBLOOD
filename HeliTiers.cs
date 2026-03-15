@@ -40,6 +40,16 @@ namespace Oxide.Plugins
             public int Crates;
             public bool NapalmEnabled;
 
+            public float DamageTakenMultiplier = 1f;
+            public float OutgoingDamageMultiplier = 1f;
+            public float MainRotorHP;
+            public float TailRotorHP;
+            public float BulletAccuracy;
+            public int BulletBurst;
+            public float BulletPauseSeconds;
+            public float FireRate;
+            public float EngageRange;
+
             // зарезервировано (как в твоём файле)
             public float BulletDamage;
             public float CruiseSpeed;
@@ -312,34 +322,53 @@ namespace Oxide.Plugins
         {
             if (entity == null || info == null) return;
 
-            // интересуемся только патрульником
-            var shortName = (entity.ShortPrefabName ?? string.Empty).ToLower();
-            if (!shortName.Contains("patrolhelicopter")) return;
-
             var be = entity as BaseEntity;
-            if (be == null || !IsOurHeli(be)) return;
+            if (be == null) return;
 
-            var attacker = info.InitiatorPlayer;
-            if (attacker == null) return;
-
-            ulong id = entity.net?.ID.Value ?? 0UL;
-            if (id == 0UL) return;
-
-            lastAttacker[id] = attacker.displayName;
-            // Пред-привязка точки падения при летальном уроне (до физического "дотягивания" до монумента)
-            try
+            // 1) Входящий урон по нашему вертолёту (DamageTakenMultiplier)
+            var shortName = (entity.ShortPrefabName ?? string.Empty).ToLower();
+            if (shortName.Contains("patrolhelicopter") && IsOurHeli(be))
             {
-                var bce = entity as BaseCombatEntity;
-                float hp = bce != null ? bce.Health() : 0f;
-                float incoming = info?.damageTypes != null ? info.damageTypes.Total() : 0f;
-                if (hp - incoming <= 0.1f)
+                ulong id = entity.net?.ID.Value ?? 0UL;
+                if (id == 0UL) return;
+
+                if (active.TryGetValue(id, out var ah))
                 {
-                    forcedCrashPos[id] = entity.transform.position;
-                    crashSpawnCount[id] = 0;
-                    antiRedirectUntil[id] = CurrentTime() + 12.0f; // слегка дольше держим
+                    var tier = GetTier(ah.TierId);
+                    if (tier != null && tier.DamageTakenMultiplier > 0f && Math.Abs(tier.DamageTakenMultiplier - 1f) > 0.001f)
+                    {
+                        try { info.damageTypes.ScaleAll(tier.DamageTakenMultiplier); } catch {}
+                    }
                 }
-            } catch {}
-    
+
+                var attacker = info.InitiatorPlayer;
+                if (attacker != null) lastAttacker[id] = attacker.displayName;
+
+                // Пред-привязка точки падения при летальном уроне (до физического "дотягивания" до монумента)
+                try
+                {
+                    var bce = entity as BaseCombatEntity;
+                    float hp = bce != null ? bce.Health() : 0f;
+                    float incoming = info?.damageTypes != null ? info.damageTypes.Total() : 0f;
+                    if (hp - incoming <= 0.1f)
+                    {
+                        forcedCrashPos[id] = entity.transform.position;
+                        crashSpawnCount[id] = 0;
+                        antiRedirectUntil[id] = CurrentTime() + 12.0f; // слегка дольше держим
+                    }
+                } catch {}
+                return;
+            }
+
+            // 2) Исходящий урон нашего вертолёта (OutgoingDamageMultiplier)
+            var owner = FindOwnerHeliForEntity(be);
+            if (owner == null) return;
+
+            var ownerTier = GetTier(owner.TierId);
+            if (ownerTier == null || ownerTier.OutgoingDamageMultiplier <= 0f) return;
+            if (Math.Abs(ownerTier.OutgoingDamageMultiplier - 1f) <= 0.001f) return;
+
+            try { info.damageTypes.ScaleAll(ownerTier.OutgoingDamageMultiplier); } catch {}
         }
 
         // смерть в бою → анонс с именем убийцы (с кэшем) + анти-флуд + crash bind
@@ -563,6 +592,27 @@ rep = timer.Every(0.1f, () => {
         #endregion
 
         #region Commands
+
+        [ChatCommand("helitiers")]
+        private void CmdRoot(BasePlayer player, string command, string[] args)
+        {
+            if (args == null || args.Length == 0 || !string.Equals(args[0], "help", StringComparison.OrdinalIgnoreCase))
+            {
+                Reply(player, "Используйте: /helitiers help");
+                return;
+            }
+
+            Reply(player, "<color=#ffd479>HeliTiers: помощь</color>");
+            Reply(player, "Чат-команды:");
+            Reply(player, "- /helitiers help — эта справка");
+            Reply(player, "- /helitiers.spawn <tierId> [x z] — спавн вертолёта");
+            Reply(player, "- /helitiers.inspect — диагностика активных вертолётов");
+            Reply(player, "- /helitiers.list — список активных вертолётов");
+            Reply(player, "- /helitiers.stop [tierId|all] — удалить активные вертолёты");
+            Reply(player, "Права:");
+            Reply(player, "- helitiers.admin");
+            Reply(player, "- helitiers.spawn.<tierId>");
+        }
 
         [ChatCommand("helitiers.list")]
         private void CmdList(BasePlayer player, string command, string[] args)
@@ -1060,6 +1110,27 @@ rep = timer.Every(0.1f, () => {
                     PrintWarning($"Не удалось применить количество ящиков для {tier.Id} — поле версии изменилось.");
                 }
 
+                // AI tuning (мягко через reflection для совместимости между версиями)
+                if (ai != null)
+                {
+                    if (tier.RocketsPerVolley > 0)
+                    {
+                        TrySetIntAny(ai, new[] { "numRockets", "maxRockets", "rocketsPerBarrage", "numRocketsLeft", "numRocketsToFire" }, tier.RocketsPerVolley);
+                    }
+                    if (tier.RocketIntervalSeconds > 0f)
+                    {
+                        TrySetFloatAny(ai, new[] { "timeBetweenRockets", "rocketInterval", "rocketFireRate", "rocketBarrageInterval" }, tier.RocketIntervalSeconds);
+                    }
+                    if (tier.EngageRange > 0f)
+                    {
+                        TrySetFloatAny(ai, new[] { "maxTargetRange", "engagementRange", "searchRange" }, tier.EngageRange);
+                    }
+                    if (tier.FireRate > 0f)
+                    {
+                        TrySetFloatAny(ai, new[] { "fireRate", "bulletFireRate", "gunFireRate" }, tier.FireRate);
+                    }
+                }
+
                 // track
                 var netId = ent.net?.ID.Value ?? 0UL;
                 active[netId] = new ActiveHeli
@@ -1170,6 +1241,73 @@ rep = timer.Every(0.1f, () => {
             }
             catch {}
             return false;
+        }
+
+        private bool TrySetFloatField(object obj, string fieldName, float value)
+        {
+            if (obj == null) return false;
+            try
+            {
+                var f = obj.GetType().GetField(fieldName, BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic);
+                if (f == null) return false;
+                if (f.FieldType == typeof(float))
+                {
+                    f.SetValue(obj, value);
+                    return true;
+                }
+                if (f.FieldType == typeof(Single))
+                {
+                    f.SetValue(obj, value);
+                    return true;
+                }
+            }
+            catch {}
+            return false;
+        }
+
+        private bool TrySetIntAny(object obj, IEnumerable<string> fieldNames, int value)
+        {
+            if (obj == null || fieldNames == null) return false;
+            bool ok = false;
+            foreach (var f in fieldNames)
+                ok |= TrySetIntField(obj, f, value);
+            return ok;
+        }
+
+        private bool TrySetFloatAny(object obj, IEnumerable<string> fieldNames, float value)
+        {
+            if (obj == null || fieldNames == null) return false;
+            bool ok = false;
+            foreach (var f in fieldNames)
+                ok |= TrySetFloatField(obj, f, value);
+            return ok;
+        }
+
+        private ActiveHeli FindOwnerHeliForEntity(BaseEntity ent)
+        {
+            if (ent == null) return null;
+
+            BaseEntity creator = null;
+            try { creator = ent.creatorEntity; } catch {}
+            ulong creatorId = creator?.net?.ID.Value ?? 0UL;
+            if (creatorId != 0UL && active.TryGetValue(creatorId, out var byCreator))
+                return byCreator;
+
+            float best = 99999f;
+            ActiveHeli bestHeli = null;
+            foreach (var kv in active)
+            {
+                var hEnt = kv.Value.Entity;
+                if (hEnt == null || hEnt.IsDestroyed) continue;
+                float dist = Vector3.Distance(hEnt.transform.position, ent.transform.position);
+                if (dist < best)
+                {
+                    best = dist;
+                    bestHeli = kv.Value;
+                }
+            }
+            if (bestHeli != null && best <= 120f) return bestHeli;
+            return null;
         }
 
         private float GetWaterHeight(Vector3 pos)
