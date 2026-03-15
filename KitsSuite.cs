@@ -15,15 +15,16 @@ namespace Oxide.Plugins
     [Description("Kits 2.0 — functional core with full-card PNG preview, invisible action hitbox, cooldown & perms.")]
     public class KitsSuite : RustPlugin
     {
-		
-		object isKit(string kitName)
-{
-    if (string.IsNullOrWhiteSpace(kitName) || _config?.Kits == null) return false;
-    return _config.Kits.Any(k => k != null &&
-        !string.IsNullOrWhiteSpace(k.Name) &&
-        string.Equals(k.Name, kitName.Trim(), StringComparison.OrdinalIgnoreCase));
-}
+        private bool IsHumanNpcPlayer(BaseEntity entity)
+        {
+            if (entity == null) return false;
 
+            var player = entity as BasePlayer;
+            if (player == null) return false;
+
+            var humanPlayerComponent = player.GetComponent("HumanPlayer");
+            return humanPlayerComponent != null;
+        }
 		
         // Use default attachments for weapons that lack explicit Mods in JSON
         private bool _useDefaultWeaponMods = true;
@@ -60,7 +61,7 @@ namespace Oxide.Plugins
         private readonly Dictionary<ulong, Dictionary<int, double>> _cooldowns = new Dictionary<ulong, Dictionary<int, double>>();
 
         // Debug
-        private bool _debug = true; // toggleable via /kitdebug
+        private bool _debug = false; // toggleable via /kitdebug
         private string _lastGiveFailReason = string.Empty;
 
         #region Data Models
@@ -929,7 +930,7 @@ AddButton(ui, "KITSUITE_CARD_HITBOX", $"{__cr[0]} {__cr[1]}", $"{__cr[2]} {__cr[
             // Permission
             if (!string.IsNullOrEmpty(kit.Permission) && !permission.UserHasPermission(player.UserIDString, kit.Permission) && !IsAdmin(player))
             {
-                reason = "Будь добр купи набор в магазине сервера на TEST.com";
+                reason = "Будь добр купи набор в магазине сервера на https://hellblood.gamestores.app/";
                 return false;
             }
             // Cooldown
@@ -1006,6 +1007,72 @@ AddButton(ui, "KITSUITE_CARD_HITBOX", $"{__cr[0]} {__cr[1]}", $"{__cr[2]} {__cr[
             }
             return false;
         }
+
+private bool GiveKitNpcPlayer(BasePlayer player, KitDef kit)
+{
+    if (player == null || kit == null || player.inventory == null) return false;
+
+    TryGiveListPlayerNoPerm(player, kit.Main);
+    TryGiveListPlayerNoPerm(player, kit.Belt);
+    TryGiveListPlayerNoPerm(player, kit.Wear);
+
+    player.inventory.ServerUpdate(0f);
+    return true;
+}
+
+private void TryGiveListPlayerNoPerm(BasePlayer player, List<ItemEntry> list)
+{
+    if (player == null || list == null) return;
+
+    foreach (var e in list)
+    {
+        if (string.IsNullOrEmpty(e.Shortname) || e.Amount <= 0) continue;
+
+        var def = ItemManager.FindItemDefinition(e.Shortname);
+        if (def == null)
+        {
+            PrintWarning($"[KS] Item not found: {e.Shortname}");
+            continue;
+        }
+
+        var item = ItemManager.Create(def, e.Amount, e.Skin);
+        if (item == null)
+        {
+            PrintWarning($"[KS] Failed to create: {e.Shortname}");
+            continue;
+        }
+
+        try
+        {
+            var mods = (e.Mods != null && e.Mods.Count > 0)
+                ? e.Mods
+                : (_useDefaultWeaponMods ? DefaultModsFor(e.Shortname) : null);
+
+            if (mods != null && item.contents != null)
+            {
+                foreach (var modSn in mods)
+                {
+                    if (string.IsNullOrEmpty(modSn)) continue;
+                    var mdef = ItemManager.FindItemDefinition(modSn);
+                    if (mdef == null) continue;
+
+                    var modItem = ItemManager.Create(mdef, 1, 0);
+                    if (modItem == null) continue;
+
+                    modItem.MoveToContainer(item.contents);
+                }
+            }
+        }
+        catch (Exception ex)
+        {
+            PrintWarning($"[KS] Mod attach error: {ex.Message}");
+        }
+
+        var order = CandidateContainers(player, e.Container);
+        if (!TryPlaceItem(item, e, order))
+            item.Remove();
+    }
+}
 
         private bool TryGiveList(BasePlayer player, List<ItemEntry> list, List<Item> created)
         {
@@ -1758,6 +1825,22 @@ private object GiveKit(BaseEntity entity, string kitName)
         // Puts($"[GiveKit] ❌ Кит '{kitName}' не найден!");
         return null;
     }
+	
+	// HumanNPC: это BasePlayer с компонентом HumanPlayer.
+// Для него работаем как для NPC: без проверки пермишнов.
+if (IsHumanNpcPlayer(entity))
+{
+    var npcPlayer = entity as BasePlayer;
+    if (npcPlayer == null) return null;
+
+    timer.Once(0.2f, () =>
+    {
+        if (npcPlayer == null || npcPlayer.IsDestroyed) return;
+        GiveKitNpcPlayer(npcPlayer, kit);
+    });
+
+    return true;
+}
     
     // Puts($"[GiveKit] ✅ Кит '{kitName}' найден, выдаём...");
 
