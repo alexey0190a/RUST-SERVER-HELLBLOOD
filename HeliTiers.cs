@@ -14,6 +14,18 @@ namespace Oxide.Plugins
     public class HeliTiers : RustPlugin
     {
         [PluginReference] private Plugin Loottable;
+        [PluginReference] private Plugin HellbloodHud;
+
+        private void SyncHudState()
+        {
+            try
+            {
+                HellbloodHud?.Call("API_SetCustomEventState", "HELITIERS", active.Count > 0);
+            }
+            catch
+            {
+            }
+        }
 
         #region Config
 
@@ -283,6 +295,7 @@ namespace Oxide.Plugins
                 }
             }
             active.Clear();
+            SyncHudState();
             forcedCrashPos.Clear();
             crashSpawnCount.Clear();
             crashTierByHeli.Clear();
@@ -361,6 +374,7 @@ namespace Oxide.Plugins
                 timer.Once(0.5f, () => Server.Broadcast(down));
 
                 active.Remove(netId);
+                SyncHudState();
                 lastDeathTime = CurrentTime();
                 autopilotLastDeathTime = CurrentTime();
 
@@ -385,6 +399,7 @@ namespace Oxide.Plugins
                 var tier = GetTier(ah.TierId);
                 Announce(tier, TierLine(config.Messages.Finished, tier, tier.FinishedMsg));
                 active.Remove(netId);
+                SyncHudState();
                 autopilotLastDeathTime = CurrentTime();
             }
 
@@ -583,6 +598,7 @@ rep = timer.Every(0.1f, () => {
                 active.Remove(a.NetId);
                 removed++;
             }
+            SyncHudState();
             Reply(player, $"Снято: {removed}");
         }
 
@@ -1035,13 +1051,12 @@ rep = timer.Every(0.1f, () => {
                     TierId = tier.Id,
                     Entity = ent
                 };
+                SyncHudState();
                 ScheduleAutopilotTtl(ent, netId);
 
                 // announce
                 Announce(tier, TierLine(config.Messages.Spawn, tier, tier.SpawnMsg));
-                timer.Once(5f, () => Announce(tier, TierLine(config.Messages.Engage, tier, tier.EngageMsg)));
-
-                return ent;
+                 return ent;
             }
             catch (Exception e)
             {
@@ -1081,6 +1096,7 @@ rep = timer.Every(0.1f, () => {
                 active.Remove(a.NetId);
                 removed++;
             }
+            SyncHudState();
             return removed;
         }
 
