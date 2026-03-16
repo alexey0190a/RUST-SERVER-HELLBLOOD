@@ -3,7 +3,11 @@
     "Delay Saving Data On Server Save": 4.0,
     "TPB": {
       "VIP Countdowns": {
-        "nteleportation.vip": 0
+        "nteleportation.admin": 0,
+        "nteleportation.default": 0,
+        "nteleportation.warlock": 0,
+        "nteleportation.lucifer": 0,
+        "nteleportation.daemon": 0
       },
       "Countdown": 0,
       "Available After X Seconds": 0
@@ -41,7 +45,7 @@
     "Block Map Marker Teleport (RaidableBases)": false,
     "Automatically Destroy Map Teleport Markers": false,
     "Chat Name": "<color=red>Teleportation</color> \n\n",
-    "Chat Steam64ID": 76561199056025689,
+    "Chat Steam64ID": 76561198109864812,
     "Check Boundaries On Teleport X Y Z": true,
     "Check Boundaries Min Height": -100.0,
     "Check Boundaries Max Height": 2000.0,
@@ -105,7 +109,11 @@
   "Home": {
     "Homes Limit": 2,
     "VIP Homes Limits": {
-      "nteleportation.vip": 5
+      "nteleportation.admin": 5,
+      "nteleportation.default": 5,
+      "nteleportation.warlock": 5,
+      "nteleportation.lucifer": 5,
+      "nteleportation.daemon": 5
     },
     "Allow Sethome At Specific Monuments": [
       "HQM Quarry",
@@ -121,13 +129,25 @@
     "Countdown": 15,
     "Daily Limit": 5,
     "VIP Daily Limits": {
-      "nteleportation.vip": 5
+      "nteleportation.admin": 5,
+      "nteleportation.default": 5,
+      "nteleportation.warlock": 5,
+      "nteleportation.lucifer": 5,
+      "nteleportation.daemon": 5
     },
     "VIP Cooldowns": {
-      "nteleportation.vip": 5
+      "nteleportation.admin": 5,
+      "nteleportation.default": 5,
+      "nteleportation.warlock": 5,
+      "nteleportation.lucifer": 5,
+      "nteleportation.daemon": 5
     },
     "VIP Countdowns": {
-      "nteleportation.vip": 5
+      "nteleportation.admin": 5,
+      "nteleportation.default": 5,
+      "nteleportation.warlock": 5,
+      "nteleportation.lucifer": 5,
+      "nteleportation.daemon": 5
     },
     "Location Radius": 25,
     "Force On Top Of Foundation": true,
@@ -181,13 +201,25 @@
     "Countdown": 15,
     "Daily Limit": 5,
     "VIP Daily Limits": {
-      "nteleportation.vip": 5
+      "nteleportation.admin": 5,
+      "nteleportation.default": 5,
+      "nteleportation.warlock": 5,
+      "nteleportation.lucifer": 5,
+      "nteleportation.daemon": 5
     },
     "VIP Cooldowns": {
-      "nteleportation.vip": 5
+      "nteleportation.admin": 5,
+      "nteleportation.default": 5,
+      "nteleportation.warlock": 5,
+      "nteleportation.lucifer": 5,
+      "nteleportation.daemon": 5
     },
     "VIP Countdowns": {
-      "nteleportation.vip": 5
+      "nteleportation.admin": 5,
+      "nteleportation.default": 5,
+      "nteleportation.warlock": 5,
+      "nteleportation.lucifer": 5,
+      "nteleportation.daemon": 5
     },
     "Enable Request UI": false,
     "Request Duration": 30,
@@ -213,13 +245,25 @@
       "Countdown": 15,
       "Daily Limit": 5,
       "VIP Daily Limits": {
-        "nteleportation.vip": 5
+        "nteleportation.admin": 5,
+        "nteleportation.default": 5,
+        "nteleportation.warlock": 5,
+        "nteleportation.lucifer": 5,
+        "nteleportation.daemon": 5
       },
       "VIP Cooldowns": {
-        "nteleportation.vip": 5
+        "nteleportation.admin": 5,
+        "nteleportation.default": 5,
+        "nteleportation.warlock": 5,
+        "nteleportation.lucifer": 5,
+        "nteleportation.daemon": 5
       },
       "VIP Countdowns": {
-        "nteleportation.vip": 5
+        "nteleportation.admin": 5,
+        "nteleportation.default": 5,
+        "nteleportation.warlock": 5,
+        "nteleportation.lucifer": 5,
+        "nteleportation.daemon": 5
       },
       "Location": "0 0 0",
       "Locations": [],
@@ -241,13 +285,25 @@
       "Countdown": 15,
       "Daily Limit": 5,
       "VIP Daily Limits": {
-        "nteleportation.vip": 5
+        "nteleportation.admin": 5,
+        "nteleportation.default": 5,
+        "nteleportation.warlock": 5,
+        "nteleportation.lucifer": 5,
+        "nteleportation.daemon": 5
       },
       "VIP Cooldowns": {
-        "nteleportation.vip": 5
+        "nteleportation.admin": 5,
+        "nteleportation.default": 5,
+        "nteleportation.warlock": 5,
+        "nteleportation.lucifer": 5,
+        "nteleportation.daemon": 5
       },
       "VIP Countdowns": {
-        "nteleportation.vip": 5
+        "nteleportation.admin": 5,
+        "nteleportation.default": 5,
+        "nteleportation.warlock": 5,
+        "nteleportation.lucifer": 5,
+        "nteleportation.daemon": 5
       },
       "Location": "0 0 0",
       "Locations": [],
@@ -269,13 +325,25 @@
       "Countdown": 15,
       "Daily Limit": 5,
       "VIP Daily Limits": {
-        "nteleportation.vip": 5
+        "nteleportation.admin": 5,
+        "nteleportation.default": 5,
+        "nteleportation.warlock": 5,
+        "nteleportation.lucifer": 5,
+        "nteleportation.daemon": 5
       },
       "VIP Cooldowns": {
-        "nteleportation.vip": 5
+        "nteleportation.admin": 5,
+        "nteleportation.default": 5,
+        "nteleportation.warlock": 5,
+        "nteleportation.lucifer": 5,
+        "nteleportation.daemon": 5
       },
       "VIP Countdowns": {
-        "nteleportation.vip": 5
+        "nteleportation.admin": 5,
+        "nteleportation.default": 5,
+        "nteleportation.warlock": 5,
+        "nteleportation.lucifer": 5,
+        "nteleportation.daemon": 5
       },
       "Location": "892.5474 44.55 538.5514",
       "Locations": [
@@ -307,13 +375,25 @@
       "Countdown": 15,
       "Daily Limit": 5,
       "VIP Daily Limits": {
-        "nteleportation.vip": 5
+        "nteleportation.admin": 5,
+        "nteleportation.default": 5,
+        "nteleportation.warlock": 5,
+        "nteleportation.lucifer": 5,
+        "nteleportation.daemon": 5
       },
       "VIP Cooldowns": {
-        "nteleportation.vip": 5
+        "nteleportation.admin": 5,
+        "nteleportation.default": 5,
+        "nteleportation.warlock": 5,
+        "nteleportation.lucifer": 5,
+        "nteleportation.daemon": 5
       },
       "VIP Countdowns": {
-        "nteleportation.vip": 5
+        "nteleportation.admin": 5,
+        "nteleportation.default": 5,
+        "nteleportation.warlock": 5,
+        "nteleportation.lucifer": 5,
+        "nteleportation.daemon": 5
       },
       "Location": "0.1419237 36.2777 -578.4766",
       "Locations": [
